@@ -438,7 +438,9 @@ function printReport(type){
 table{width:100%;border-collapse:collapse;table-layout:auto;font-size:10px}thead{display:table-header-group}tfoot{display:table-footer-group}tr{break-inside:avoid;page-break-inside:avoid}th,td{border:1px solid #d9c4ca;padding:6px 5px;text-align:right;vertical-align:middle;white-space:normal;overflow-wrap:anywhere}th{background:#f4e2e7;color:#571321;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}.data-table{margin-top:0}.summary{background:#fff5f7;border:1px solid #ead9de;padding:10px;margin-top:12px;font-weight:700;line-height:1.9}.negative{color:#c62828!important;font-weight:700}
 .report-foot{position:fixed;bottom:-18mm;right:0;left:0;border-top:1px solid #d9c4ca;padding-top:5px;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#6b2938}.sign-name{font-weight:700;color:#174c91;font-size:10px}.page-counter:after{content:counter(page) ' / ' counter(pages)}.preview-actions{position:sticky;top:0;z-index:5;background:#fff5f7;border:1px solid #ead9de;padding:10px;margin-bottom:15px;text-align:center}.export-btn{background:#721b2b;color:white;border:0;border-radius:7px;padding:10px 22px;font-weight:bold;cursor:pointer}.preview-sheet{max-width:190mm;margin:0 auto;background:#fff;box-shadow:0 2px 18px #0001;padding:8mm;min-height:240mm}.report-head{position:static;margin-bottom:14px}.report-foot{position:static;margin-top:25px}.report-sign{display:none}
 @media print{body{padding:0}.preview-actions{display:none!important}.preview-sheet{max-width:none;min-height:0;margin:0;padding:0;box-shadow:none}.report-head{position:fixed;top:-29mm;right:0;left:0;margin:0}.report-foot{position:fixed;bottom:-18mm;right:0;left:0;margin:0}.data-table{margin-top:0}}
-</style></head><body><div class="preview-actions"><button class="export-btn" onclick="window.opener.audit('تصدير تقرير PDF','${title}');window.print()">تصدير التقرير مباشرة كملف PDF</button><span style="margin-right:12px;color:#6b2938;font-size:12px">اختر Save as PDF في نافذة الطباعة</span></div><main class="preview-sheet"><header class="report-head"><img src="https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>${title}</b><p>الفترة: ${f?dateDisplay(f):'—'} إلى ${t?dateDisplay(t):'—'} | تاريخ الإصدار: ${dateDisplay(today())}</p></div></header><table class="data-table"><thead>${cleanRows.match(/<tr><th[\s\S]*?<\/tr>/i)?.[0]||''}</thead><tbody>${cleanRows.replace(/<tr><th[\s\S]*?<\/tr>/i,'')}</tbody></table><div class="summary">${summary}</div><footer class="report-foot"><span>Fondant Choco | فوندانت شوكو</span><span>صفحة <b class="page-counter"></b></span><span class="sign-name">Finance Manager - Yasser</span></footer></main></body></html>`);w.document.close();
+</style></head><body><div class="preview-actions"><button class="export-btn" onclick="window.opener.audit('تصدير تقرير PDF','${title}');window.print()">تصدير التقرير مباشرة كملف PDF</button><span style="margin-right:12px;color:#6b2938;font-size:12px">اختر Save as PDF في نافذة الطباعة</span></div><main class="preview-sheet"><header class="report-head"><img src="https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>${title}</b><p>الفترة: ${f?dateDisplay(f):'—'} إلى ${t?dateDisplay(t):'—'} | تاريخ الإصدار: ${dateDisplay(today())}</p></div></header><table class="data-table"><thead>${cleanRows.match(/<tr><th[\s\S]*?<\/tr>/i)?.[0]||''}</thead><tbody>${cleanRows.replace(/<tr><th[\s\S]*?<\/tr>/i,'')}</tbody></table><div class="summary">${summary}</div><footer class="report-foot"><span>Fondant Choco | فوندانت شوكو</span><span>صفحة <b class="page-counter"></b></span><span class="sign-name">Finance Manager - Yasser</span></footer></main>
+
+</body></html>`);w.document.close();
 }
 function fmtPdf(x){let z=fmt(x);return Number(x)<0?`<span class="negative">${z}</span>`:z}
 
@@ -682,7 +684,7 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
     w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escFC(title)}</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
     <style>
-      *{box-sizing:border-box}body{margin:0;background:#f2e9ec;color:#35242a;font-family:Arial,Tahoma,sans-serif}.toolbar{position:sticky;top:0;z-index:50;background:#fff;padding:12px;text-align:center;border-bottom:1px solid #d7c3c9}.toolbar button{background:#721b2b;color:#fff;border:0;border-radius:8px;padding:11px 26px;font-weight:bold;cursor:pointer}.toolbar span{margin-right:12px;color:#654650}.pdf-page{width:794px;height:1123px;margin:16px auto;background:#fff;position:relative;padding:32px 38px 82px;overflow:hidden;box-shadow:0 2px 12px #0002}.report-head{height:116px;display:flex;align-items:center;gap:16px;border-bottom:3px solid #721b2b;margin-bottom:14px;padding-bottom:10px}.report-head img{width:86px;height:86px;object-fit:contain}.report-head h2{margin:0 0 7px;color:#571321;font-size:20px}.report-head b{font-size:17px;color:#721b2b}.report-head p{font-size:11px;margin:7px 0 0;color:#76535c}.pdf-page table{width:100%;border-collapse:collapse;table-layout:auto;font-size:11px}.pdf-page th,.pdf-page td{border:1px solid #d9c6cc;padding:7px 6px;text-align:right;vertical-align:middle;overflow-wrap:anywhere}.pdf-page th{background:#f3e1e6;color:#571321;font-weight:bold}.pdf-page td.negative{color:#c62828;font-weight:bold}.report-summary{margin-top:10px;background:#fff5f7;border:1px solid #ead9de;padding:9px;font-size:11px;line-height:1.7;font-weight:bold}.report-foot{position:absolute;bottom:24px;left:38px;right:38px;border-top:1px solid #b98c98;padding-top:8px;display:flex;justify-content:space-between;align-items:center;color:#6b2938;font-size:10px}.report-foot strong{font-size:9px;color:#1456a0}.date-cell{direction:ltr;unicode-bidi:isolate;white-space:nowrap}@media print{body{background:#fff}.toolbar{display:none}.pdf-page{margin:0;box-shadow:none;page-break-after:always;break-after:page}}
+      *{box-sizing:border-box}body{margin:0;background:#f2e9ec;color:#35242a;font-family:Arial,Tahoma,sans-serif}.toolbar{position:sticky;top:0;z-index:50;background:#fff;padding:12px;text-align:center;border-bottom:1px solid #d7c3c9}.toolbar button{background:#721b2b;color:#fff;border:0;border-radius:8px;padding:11px 26px;font-weight:bold;cursor:pointer}.toolbar span{margin-right:12px;color:#654650}.pdf-page{width:794px;height:1123px;margin:16px auto;background:#fff;position:relative;padding:32px 38px 82px;overflow:hidden;box-shadow:0 2px 12px #0002}.report-head{height:116px;display:flex;align-items:center;gap:16px;border-bottom:3px solid #721b2b;margin-bottom:14px;padding-bottom:10px}.report-head img{width:86px;height:86px;object-fit:contain}.report-head h2{margin:0 0 7px;color:#571321;font-size:20px}.report-head b{font-size:17px;color:#721b2b}.report-head p{font-size:11px;margin:7px 0 0;color:#76535c}.pdf-page table{width:100%;border-collapse:collapse;table-layout:auto;font-size:11px}.pdf-page th,.pdf-page td{border:1px solid #d9c6cc;padding:7px 6px;text-align:right;vertical-align:middle;overflow-wrap:anywhere}.pdf-page th:nth-child(4),.pdf-page td:nth-child(4){min-width:92px;white-space:nowrap;overflow-wrap:normal}.pdf-page th:nth-child(5),.pdf-page td:nth-child(5){min-width:112px;white-space:nowrap;overflow-wrap:normal}.pdf-page th:nth-child(6),.pdf-page td:nth-child(6){min-width:95px;white-space:nowrap;overflow-wrap:normal}.pdf-page th{background:#f3e1e6;color:#571321;font-weight:bold}.pdf-page td.negative{color:#c62828;font-weight:bold}.report-summary{margin-top:10px;background:#fff5f7;border:1px solid #ead9de;padding:9px;font-size:11px;line-height:1.7;font-weight:bold}.report-foot{position:absolute;bottom:24px;left:38px;right:38px;border-top:1px solid #b98c98;padding-top:8px;display:flex;justify-content:space-between;align-items:center;color:#6b2938;font-size:10px}.report-foot strong{font-size:9px;color:#1456a0}.date-cell{direction:ltr;unicode-bidi:isolate;white-space:nowrap}@media print{body{background:#fff}.toolbar{display:none}.pdf-page{margin:0;box-shadow:none;page-break-after:always;break-after:page}}
     </style></head><body><div class="toolbar"><button onclick="exportReportPDF()">تنزيل PDF مباشرة</button><span>معاينة التقرير قبل التنزيل</span></div><div id="pages"></div>
     <script>
       const R=${json};const root=document.getElementById('pages');const pages=[];const source=document.createElement('tbody');source.innerHTML=(R.rows||[]).join('');const trs=[...source.querySelectorAll('tr')];
@@ -896,4 +898,149 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
 })();
 </script>
 
+
+<script>
+/* FC requested layout, KPI, report and stock-export enhancements */
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const escFC2=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money=a=>(Number(a)||0).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
+  const inPeriod=x=>{const p=period();return p.ok(x.date)};
+  const orderedFC=a=>[...(a||[])].sort((x,y)=>String(x.date||'').localeCompare(String(y.date||'')));
+
+  // Dashboard: requested KPI order and an independent Ibrahim direct-payments card.
+  const dashCards=$('#dashboard .cards');
+  if(dashCards){
+    if(!$('dIbrahimDirect')){
+      const card=document.createElement('div');card.className='stat';
+      card.innerHTML='<span class="symbol">🤝</span><div class="label">إجمالي ما دفعه الشريك إبراهيم مباشرة</div><div class="value" id="dIbrahimDirect">0.000</div><small>دون تمويل العهدة</small>';
+      dashCards.appendChild(card);
+    }
+    const ids=['dSales','dExpenses','dPetty','dStockValue','dIbrahim','dIbrahimDirect','dItems','dProducts','dTopups'];
+    ids.forEach(id=>{const el=$(id)?.closest('.stat');if(el)dashCards.appendChild(el)});
+    const labels={'dSales':'إجمالي المبيعات','dExpenses':'إجمالي المدفوعات التشغيلية','dPetty':'رصيد العهدة المتبقي','dStockValue':'قيمة المخزون التقديرية','dIbrahim':'إجمالي ما دفعه الشريك نواف مباشرة','dIbrahimDirect':'إجمالي ما دفعه الشريك إبراهيم مباشرة'};
+    Object.entries(labels).forEach(([id,label])=>{const el=$(id)?.closest('.stat')?.querySelector('.label');if(el)el.textContent=label});
+  }
+  const renderDashBase=window.renderDashboard;
+  window.renderDashboard=function(){
+    if(typeof renderDashBase==='function')renderDashBase();
+    const op=(db.purchases||[]).filter(p=>['purchase','expense','supplierPayment'].includes(p.type)).reduce((z,p)=>z+(Number(p.total)||0),0);
+    const nw=(db.purchases||[]).filter(p=>p.type!=='topup'&&p.payer==='nawaf').reduce((z,p)=>z+(Number(p.total)||0),0);
+    const ib=(db.purchases||[]).filter(p=>p.type!=='topup'&&p.payer==='ibrahim').reduce((z,p)=>z+(Number(p.total)||0),0);
+    if($('dExpenses'))$('dExpenses').textContent=money(op);
+    if($('dIbrahim'))$('dIbrahim').textContent=money(nw);
+    if($('dIbrahimDirect'))$('dIbrahimDirect').textContent=money(ib);
+  };
+
+  // Reports: put preview buttons immediately after the date selector and before the five KPI cards.
+  const reportPage=$('#reports');
+  if(reportPage){
+    const dateFilters=reportPage.querySelector('#reportFrom')?.closest('.filters');
+    let action=reportPage.querySelector('.report-actions');
+    if(dateFilters&&action){
+      let wrapper=reportPage.querySelector('.report-actions-top');
+      if(!wrapper){wrapper=document.createElement('div');wrapper.className='section report-actions-top';wrapper.innerHTML='<div class="section-head"><h3>معاينة التقارير</h3><span class="muted">اختر التقرير لعرضه ثم نزّله PDF مباشرة</span></div>';dateFilters.insertAdjacentElement('afterend',wrapper)}
+      const oldSection=action.closest('.section');
+      wrapper.appendChild(action);
+      if(oldSection&&oldSection!==wrapper)oldSection.remove();
+    }
+    const reportCards=reportPage.querySelector('.cards');
+    if(reportCards){
+      const old=reportCards.querySelector('#rIbrahimDirect');
+      if(!old){const c=document.createElement('div');c.className='stat';c.innerHTML='<div class="label">مدفوعات إبراهيم المباشرة</div><div class="value" id="rIbrahimDirect">0.000</div><small>دون تمويل العهدة</small>';reportCards.appendChild(c)}
+      const nwLabel=reportCards.querySelector('#rIbrahim')?.closest('.stat')?.querySelector('.label');if(nwLabel)nwLabel.textContent='مدفوعات نواف المباشرة';
+      const ibLabel=reportCards.querySelector('#rIbrahimDirect')?.closest('.stat')?.querySelector('.label');if(ibLabel)ibLabel.textContent='مدفوعات إبراهيم المباشرة';
+    }
+    if(action){
+      const extra=[
+        ['supplier','مشتريات الموردين'],['channels','تحليل قنوات البيع'],['margin','ربحية المنتجات'],
+        ['monthly','مقارنة شهرية'],['lowstock','الأصناف منخفضة المخزون']
+      ];
+      extra.forEach(([type,label])=>{if(action.querySelector(`[data-extra-report="${type}"]`))return;const b=document.createElement('button');b.type='button';b.className='btn secondary';b.dataset.extraReport=type;b.textContent='معاينة '+label;b.addEventListener('click',()=>window.printCustomReportFC(type));action.appendChild(b)});
+    }
+  }
+  const reportBase=window.renderReports;
+  window.renderReports=function(){
+    if(typeof reportBase==='function')reportBase();
+    const a=(db.purchases||[]).filter(inPeriod);
+    const ib=a.filter(p=>p.type!=='topup'&&p.payer==='ibrahim').reduce((z,p)=>z+(Number(p.total)||0),0);
+    if($('rIbrahimDirect'))$('rIbrahimDirect').textContent=money(ib);
+  };
+
+  // Expert reports with clear definitions and period filtering.
+  function customRows(type){
+    const ps=orderedFC((db.purchases||[]).filter(inPeriod)),ss=orderedFC((db.sales||[]).filter(inPeriod));
+    const tr=(...cells)=>'<tr>'+cells.map(x=>'<td>'+x+'</td>').join('')+'</tr>';
+    let title='',headers=[],rows=[],summary='';
+    if(type==='supplier'){
+      title='تفصيل مشتريات الموردين';headers=['التاريخ','المورد','رقم المرجع','التصنيف','مصدر الدفع','القيمة'];
+      const a=ps.filter(p=>p.type==='purchase');rows=a.map(p=>tr(dateDisplay(p.date),escFC2(p.vendor||'غير محدد'),escFC2(p.ref||'—'),escFC2(p.category||'—'),payerLabel(p.payer),money(p.total)));
+      summary='عدد فواتير الشراء: '+a.length+' | إجمالي مشتريات الموردين: '+money(a.reduce((z,x)=>z+(Number(x.total)||0),0));
+    }else if(type==='channels'){
+      title='تحليل المبيعات حسب قناة البيع';headers=['قناة البيع','عدد العمليات','الكمية','إجمالي المبيعات','العمولات والرسوم','صافي الإيراد','تكلفة المبيعات','الربح التقديري'];
+      const g={};ss.forEach(x=>{const k=channelLabel(x.channel)||'غير محدد',v=g[k]||(g[k]={count:0,qty:0,gross:0,fees:0,net:0,cost:0});v.count++;v.qty+=Number(x.qty)||0;v.gross+=Number(x.total)||0;v.fees+=(Number(x.platformFee)||0)+(Number(x.paymentFee)||0);v.net+=Number(x.net??x.total)||0;v.cost+=Number(x.cost)||0});
+      rows=Object.entries(g).sort((a,b)=>b[1].gross-a[1].gross).map(([k,v])=>tr(escFC2(k),v.count,money(v.qty),money(v.gross),money(v.fees),money(v.net),money(v.cost),money(v.net-v.cost)));
+      summary='صافي الإيراد = إجمالي البيع ناقص عمولة المنصة ورسوم الدفع. الربح التقديري = صافي الإيراد ناقص تكلفة المنتجات المباعة.';
+    }else if(type==='margin'){
+      title='تحليل ربحية المنتجات';headers=['المنتج','الكمية المباعة','إجمالي المبيعات','الرسوم','صافي الإيراد','تكلفة المنتجات','الربح التقديري','هامش الربح %'];
+      const g={};ss.forEach(x=>{const k=x.recipeId||x.name,v=g[k]||(g[k]={name:x.name,qty:0,gross:0,fees:0,net:0,cost:0});v.qty+=Number(x.qty)||0;v.gross+=Number(x.total)||0;v.fees+=(Number(x.platformFee)||0)+(Number(x.paymentFee)||0);v.net+=Number(x.net??x.total)||0;v.cost+=Number(x.cost)||0});
+      rows=Object.values(g).sort((a,b)=>(b.net-b.cost)-(a.net-a.cost)).map(v=>{const profit=v.net-v.cost;return tr(escFC2(v.name),money(v.qty),money(v.gross),money(v.fees),money(v.net),money(v.cost),money(profit),v.net?((profit/v.net)*100).toFixed(2)+'%':'—')});
+      summary='هامش الربح = الربح التقديري ÷ صافي الإيراد. التحليل لا يشمل التكاليف الصناعية غير المباشرة ما لم تكن ضمن تكلفة المنتج المسجلة.';
+    }else if(type==='monthly'){
+      title='مقارنة المبيعات والمشتريات والمصروفات شهرياً';headers=['الشهر','إجمالي المبيعات','مشتريات المواد','المصروفات التشغيلية','صافي المبيعات بعد الرسوم','تكلفة المنتجات','نتيجة تقديرية'];
+      const g={};ss.forEach(x=>{const k=(x.date||'').slice(0,7);if(!k)return;const v=g[k]||(g[k]={sales:0,net:0,cost:0,purchase:0,expense:0});v.sales+=Number(x.total)||0;v.net+=Number(x.net??x.total)||0;v.cost+=Number(x.cost)||0});
+      ps.forEach(x=>{const k=(x.date||'').slice(0,7);if(!k)return;const v=g[k]||(g[k]={sales:0,net:0,cost:0,purchase:0,expense:0});if(x.type==='purchase')v.purchase+=Number(x.total)||0;if(x.type==='expense'||x.type==='supplierPayment')v.expense+=Number(x.total)||0});
+      rows=Object.keys(g).sort().map(k=>{const v=g[k];return tr(k,money(v.sales),money(v.purchase),money(v.expense),money(v.net),money(v.cost),money(v.net-v.cost-v.expense))});
+      summary='النتيجة التقديرية الشهرية = صافي المبيعات بعد الرسوم − تكلفة المنتجات المباعة − المصروفات التشغيلية المسجلة. المشتريات معروضة للمقارنة ولا تخصم مرة أخرى من الربح.';
+    }else if(type==='lowstock'){
+      title='تقرير الأصناف منخفضة المخزون';headers=['الصنف','المجموعة','الرصيد الحالي','الوحدة','حد التنبيه','الكمية المطلوبة للوصول للحد','قيمة الرصيد الحالي'];
+      const a=(db.items||[]).filter(x=>Number(x.min)>0&&Number(x.qty)<=Number(x.min)).sort((x,y)=>(Number(x.qty)-Number(x.min))-(Number(y.qty)-Number(y.min)));
+      rows=a.map(x=>tr(escFC2(x.name),escFC2(x.group||'—'),money(x.qty),escFC2(unitDisplay(x.unit)),money(x.min),money(Math.max(0,Number(x.min)-Number(x.qty))),money(Number(x.qty)*Number(x.cost))));
+      summary='عدد الأصناف التي وصلت إلى حد التنبيه أو أقل: '+a.length+'. الكمية المطلوبة تساوي حد التنبيه ناقص الرصيد الحالي.';
+    }
+    return {title,headers,rows,summary};
+  }
+  window.printCustomReportFC=function(type){
+    try{
+      const r=customRows(type),from=$('reportFrom')?.value||'',to=$('reportTo')?.value||'';
+      if(!r.title)return;
+      const data={...r,from,to,logo:'https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg'};
+      const w=window.open('','_blank');if(!w)return toast('اسمح بالنوافذ المنبثقة لمعاينة التقرير');
+      const json=JSON.stringify(data).replace(/</g,'\\u003c');
+      w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escFC2(r.title)}</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script><style>*{box-sizing:border-box}body{margin:0;background:#f4e9ed;font-family:Arial,Tahoma,sans-serif;color:#35242a}.toolbar{position:sticky;top:0;background:white;padding:12px;text-align:center;z-index:5}.toolbar button{background:#721b2b;color:#fff;border:0;border-radius:8px;padding:11px 24px;font-weight:bold}.page{width:1123px;min-height:794px;margin:14px auto;background:white;padding:30px 36px;position:relative}.head{display:flex;align-items:center;gap:18px;border-bottom:3px solid #721b2b;padding-bottom:12px;margin-bottom:18px}.head img{width:80px;height:80px;object-fit:contain}.head h2{margin:0 0 6px;color:#571321}.head p{margin:5px 0;font-size:12px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #d9c6cc;padding:8px 7px;text-align:right;white-space:nowrap}th{background:#f3e1e6;color:#571321}.summary{margin-top:14px;background:#fff5f7;border:1px solid #ead9de;padding:10px;font-weight:bold;line-height:1.7}@media print{.toolbar{display:none}.page{margin:0}}</style></head><body><div class="toolbar"><button onclick="downloadPDF()">تنزيل PDF مباشرة</button></div><main class="page" id="page"><header class="head"><img src="${data.logo}"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>${escFC2(data.title)}</b><p>الفترة: ${from||'كل الفترات'} إلى ${to||'اليوم'}</p></div></header><table><thead><tr>${data.headers.map(x=>'<th>'+x+'</th>').join('')}</tr></thead><tbody>${data.rows.join('')||'<tr><td colspan="'+data.headers.length+'">لا توجد بيانات</td></tr>'}</tbody></table><div class="summary">${escFC2(data.summary)}</div></main><script>async function downloadPDF(){try{const {jsPDF}=window.jspdf,p=new jsPDF('l','pt','a4'),c=await html2canvas(document.getElementById('page'),{scale:2,useCORS:true,backgroundColor:'#fff'}),pw=p.internal.pageSize.getWidth(),ph=p.internal.pageSize.getHeight(),sliceH=Math.floor(c.width*ph/pw);for(let y=0,i=0;y<c.height;y+=sliceH,i++){const h=Math.min(sliceH,c.height-y),part=document.createElement('canvas');part.width=c.width;part.height=h;part.getContext('2d').drawImage(c,0,y,c.width,h,0,0,c.width,h);if(i)p.addPage();p.addImage(part.toDataURL('image/jpeg',.96),'JPEG',0,0,pw,h*pw/c.width)}p.save('FondantChoco_${type}.pdf')}catch(e){alert('تعذر إنشاء PDF: '+e.message)}}</\\/script></body></html>`);
+      w.document.close();audit('معاينة تقرير تحليلي',r.title);
+    }catch(e){console.error(e);toast('تعذر تجهيز التقرير المقترح: '+e.message)}
+  };
+
+  // Move stock balances directly under the item-creation form (before unit definitions).
+  const stockPage=$('#stock');
+  if(stockPage){
+    const sections=[...stockPage.querySelectorAll(':scope > .section')];
+    const balance=sections.find(x=>x.querySelector('#stockRows'));
+    if(balance){balance.classList.add('stock-balance-section');const add=sections.find(x=>x.querySelector('#itemName'));if(add)add.insertAdjacentElement('afterend',balance)}
+  }
+  // Direct PDF download next to the existing Excel export for the stock balance table.
+  window.exportTablePDF_FC=async function(tableId){
+    const table=$(tableId);if(!table)return toast('لم يتم العثور على الجدول');
+    if(!window.jspdf||!window.html2canvas)return toast('مكتبات PDF لم يتم تحميلها؛ تحقق من الإنترنت');
+    const host=document.createElement('div');host.style.cssText='position:fixed;left:-20000px;top:0;width:1450px;background:#fff;padding:24px;direction:rtl;color:#222;font-family:Arial,Tahoma,sans-serif';
+    const title=table.closest('.stock-balance-section')?.querySelector('h3')?.textContent||'أرصدة المخزون';
+    const clone=table.cloneNode(true);clone.querySelectorAll('button').forEach(x=>x.remove());clone.style.cssText='width:100%;border-collapse:collapse;table-layout:auto;font-size:12px;white-space:nowrap';
+    clone.querySelectorAll('th,td').forEach(x=>x.style.cssText+=';border:1px solid #bbb;padding:8px;text-align:right;white-space:nowrap');
+    host.innerHTML='<h2 style="color:#571321;border-bottom:3px solid #721b2b;padding-bottom:12px">Fondant Choco | '+title+'</h2><p>تاريخ التقرير: '+dateDisplay(today())+'</p>';
+    host.appendChild(clone);document.body.appendChild(host);
+    try{const canvas=await html2canvas(host,{scale:1.5,backgroundColor:'#fff',useCORS:true}),{jsPDF}=window.jspdf,pdf=new jsPDF('l','pt','a4'),pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),sliceH=Math.floor(canvas.width*ph/pw);for(let y=0,i=0;y<canvas.height;y+=sliceH,i++){const h=Math.min(sliceH,canvas.height-y),part=document.createElement('canvas');part.width=canvas.width;part.height=h;part.getContext('2d').drawImage(canvas,0,y,canvas.width,h,0,0,canvas.width,h);if(i)pdf.addPage();pdf.addImage(part.toDataURL('image/jpeg',.96),'JPEG',0,0,pw,h*pw/canvas.width)}pdf.save('FondantChoco_StockBalances_'+today()+'.pdf');audit('تصدير أرصدة المخزون PDF','تقرير أرصدة المخزون');toast('تم تنزيل تقرير أرصدة المخزون PDF مباشرة')}
+    catch(e){console.error(e);toast('تعذر تصدير أرصدة المخزون PDF: '+e.message)}finally{host.remove()}
+  };
+  const stockBody=$('stockRows'),stockTable=stockBody?.closest('table');if(stockTable){let bar=stockTable.parentElement.querySelector('.xlsx-toolbar');if(bar&&!bar.querySelector('[data-stock-pdf]')){const b=document.createElement('button');b.type='button';b.className='btn small';b.dataset.stockPdf='1';b.textContent='تصدير PDF';b.style.marginRight='7px';b.onclick=()=>exportTablePDF_FC(stockTable.id);bar.appendChild(b)}}
+
+  // Improve item-purchase preview: keep purchase unit, stock quantity and value readable on one line.
+  const reportStyle=document.createElement('style');reportStyle.textContent=`#reports .cards{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px}@media(max-width:1100px){#reports .cards{grid-template-columns:repeat(3,minmax(0,1fr))!important}}@media(max-width:700px){#reports .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}.report-actions-top .report-actions{margin-top:0}.report-actions-top .btn{white-space:normal}.stock-balance-section .tablewrap{overflow-x:auto!important}.stock-balance-section table{table-layout:auto!important;white-space:nowrap!important}.stock-balance-section th,.stock-balance-section td{white-space:nowrap!important;overflow-wrap:normal!important}#stock .section:last-child table{table-layout:auto!important;width:100%!important;font-size:14px!important}#stock .section:last-child th,#stock .section:last-child td{white-space:nowrap!important;overflow-wrap:normal!important}`;document.head.appendChild(reportStyle);
+  // The existing report preview is a separate window; these widths prevent the key item columns wrapping.
+  const previewPatch=document.createElement('style');previewPatch.textContent='';document.head.appendChild(previewPatch);
+  // Refresh computed cards once after all elements and handlers are installed.
+  try{if(typeof window.renderDashboard==='function')window.renderDashboard();if(typeof window.renderReports==='function')window.renderReports()}catch(e){console.warn('KPI refresh skipped',e)}
+})();
+</script>
 </body></html>
