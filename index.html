@@ -288,7 +288,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
    <div class="section"><h3>تقرير مدفوعات الشركاء</h3><div id="ibrahimReport"></div></div>
    <div class="section"><h3>ملخص المبيعات</h3><div id="salesSummary"></div></div>
   </div>
-  <div class="section"><div class="section-head"><h3>مشتريات صنف محدد</h3><input id="reportItemSearch" list="itemList" placeholder="ابحث عن صنف" oninput="renderSpecificItemReport()"></div><div id="specificItemReport" class="muted">اختر صنفاً لعرض إجمالي كمياته وقيم مشترياته.</div></div>
+  <div class="section"><div class="section-head"><h3>مشتريات الأصناف </h3><input id="reportItemSearch" list="itemList" placeholder="ابحث عن صنف" oninput="renderSpecificItemReport()"></div><div id="specificItemReport" class="muted">اختر صنفاً لعرض إجمالي كمياته وقيم مشترياته.</div></div>
   <div class="section"><div class="section-head"><h3>مبيعات منتج محدد</h3><input id="reportProductSearch" list="productList" placeholder="ابحث عن منتج" oninput="renderSpecificProductReport()"></div><div id="specificProductReport" class="muted">اختر منتجاً لعرض إجمالي الكمية والمبيعات والتكلفة والربح.</div></div>
   <div class="section"><h3>المخزون وقيمة المواد</h3><div class="tablewrap"><table><thead><tr><th>الصنف</th><th>المشتريات التراكمية</th><th>الوحدة</th><th>قيمة الشراء</th><th>الرصيد الحالي</th><th>قيمة المخزون</th></tr></thead><tbody id="itemReport"></tbody></table></div></div>
   <div class="section"><h3>ملخص المبيعات حسب المنتج</h3><div class="tablewrap"><table><thead><tr><th>المنتج</th><th>الكمية المباعة</th><th>إجمالي المبيعات</th><th>تكلفة المنتجات</th><th>صافي بعد الرسوم</th><th>الربح بعد تكلفة المنتج</th></tr></thead><tbody id="productReport"></tbody></table></div></div>
@@ -925,7 +925,7 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
   const status = document.createElement('span');
   status.id = 'firebaseStatus';
   status.className = 'today';
-  status.textContent = 'Firebase: جاري الاتصال...';
+  status.textContent = ' جاري الاتصال بقاعدة البيانات';
   document.querySelector('.authbar')?.appendChild(status);
 
   let ready = false, applyingRemote = false, pushTimer = null, lastLocalWrite = 0;
