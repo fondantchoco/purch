@@ -108,6 +108,13 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+#reports .report-kpis{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#reports .report-kpis .stat{min-width:0}
+#dashboard .dashboard-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1100px){#reports .report-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}#dashboard .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){#reports .report-kpis,#dashboard .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -131,14 +138,15 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 <main class="main">
 <header class="top"><div><h1 id="pageTitle">لوحة التحكم</h1><p>متابعة المشتريات والمخزون والإنتاج والمبيعات</p></div><div class="authbar"><span class="today" id="today"></span><span class="today" id="currentUserLabel">غير مسجل</span><button class="btn secondary small no-print" onclick="changePassword()">تغيير كلمة المرور</button><button class="btn danger small no-print" onclick="logout()">خروج</button></div></header>
 <section class="page active" id="dashboard">
- <div class="cards">
-  <div class="stat"><span class="symbol">💳</span><div class="label">إجمالي المدفوعات التشغيلية</div><div class="value" id="dExpenses">0.000</div><small>دون تجديد العهدة</small></div>
-  <div class="stat"><span class="symbol">🤝</span><div class="label">إجمالي ما دفعه الشريك نواف مباشرة</div><div class="value" id="dIbrahim">0.000</div><small>دون تمويل العهدة</small></div>
-  <div class="stat"><span class="symbol">🧾</span><div class="label">رصيد العهدة المتبقي</div><div class="value" id="dPetty">0.000</div><small>&nbsp;</small></div>
-  <div class="stat"><span class="symbol">📦</span><div class="label">أصناف المخزون</div><div class="value" id="dItems">0</div><small>صنف</small></div>
+ <div class="cards dashboard-kpis">
   <div class="stat"><span class="symbol">🛒</span><div class="label">إجمالي المبيعات</div><div class="value" id="dSales">0.000</div><small>&nbsp;</small></div>
-  <div class="stat"><span class="symbol">🏭</span><div class="label">المنتجات المعرفة</div><div class="value" id="dProducts">0</div><small>منتج / نصف مصنع</small></div>
+  <div class="stat"><span class="symbol">💳</span><div class="label">إجمالي المدفوعات التشغيلية</div><div class="value" id="dExpenses">0.000</div><small>دون تجديد العهدة</small></div>
+  <div class="stat"><span class="symbol">🧾</span><div class="label">رصيد العهدة المتبقي</div><div class="value" id="dPetty">0.000</div><small>&nbsp;</small></div>
   <div class="stat"><span class="symbol">⚖️</span><div class="label">قيمة المخزون التقديرية</div><div class="value" id="dStockValue">0.000</div><small>&nbsp;</small></div>
+  <div class="stat"><span class="symbol">🤝</span><div class="label">إجمالي ما دفعه الشريك نواف مباشرة</div><div class="value" id="dIbrahim">0.000</div><small>دون تمويل العهدة</small></div>
+  <div class="stat"><span class="symbol">🤝</span><div class="label">إجمالي ما دفعه الشريك إبراهيم مباشرة</div><div class="value" id="dIbrahimDirect">0.000</div><small>دون تمويل العهدة</small></div>
+  <div class="stat"><span class="symbol">📦</span><div class="label">أصناف المخزون</div><div class="value" id="dItems">0</div><small>صنف</small></div>
+  <div class="stat"><span class="symbol">🏭</span><div class="label">المنتجات المعرفة</div><div class="value" id="dProducts">0</div><small>منتج / نصف مصنع</small></div>
   <div class="stat"><span class="symbol">🔄</span><div class="label">تجديد العهدة</div><div class="value" id="dTopups">0.000</div><small>تمويل</small></div>
  </div>
  <div class="two-col">
@@ -198,12 +206,13 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
    <div class="field"><label>ملاحظات</label><input id="itemNote" placeholder="اختياري"></div>
   </div><div class="actions"><button class="btn" onclick="addItem()">إضافة الصنف</button></div>
  </div>
+ <div class="section"><div class="section-head"><h3>أرصدة المخزون</h3><input id="stockSearch" placeholder="بحث باسم الصنف..." oninput="renderStock()" style="border:1px solid var(--line);padding:9px;border-radius:9px;font-size:13px"></div><div class="tablewrap"><table><thead><tr><th>الصنف</th><th>كود المورد</th><th>المجموعة</th><th>الرصيد</th><th>الوحدة الأساسية</th><th>متوسط التكلفة / وحدة</th><th>قيمة المخزون</th><th>حد التنبيه</th><th>إجراء</th></tr></thead><tbody id="stockRows"></tbody></table></div></div>
  <div class="section"><div class="section-head"><div><h3>تعريف وحدات القياس ومعامل التحويل</h3><div class="muted">كل معامل يوضح عدد وحدات المخزون الأساسية داخل وحدة الشراء</div></div><button class="btn secondary small" onclick="addUnit()">＋ إضافة وحدة جديدة</button></div>
   <div class="formgrid"><div class="field"><label>اسم الوحدة</label><input id="unitName" placeholder="مثال: كرتون"></div><div class="field"><label>معامل التحويل إلى الوحدة الأساسية</label><input id="unitFactor" inputmode="decimal" placeholder="مثال: 60000"></div><div class="field"><label>ملاحظات</label><input id="unitNote" placeholder="مثال: 4 أكياس × 15 كيلو"></div></div>
   <div class="actions"><button class="btn" onclick="saveUnit()">حفظ الوحدة</button></div>
   <div class="tablewrap"><table><thead><tr><th>الوحدة</th><th>المعامل الافتراضي</th><th>ملاحظات</th><th></th></tr></thead><tbody id="unitRows"></tbody></table></div>
   <div class="notice">مثال كرتونة الشوكولاتة: 4 أكياس × 15 كجم × 1000 جرام = 60,000 جرام. معامل الوحدة يمكن تخصيصه لكل صنف داخل الفاتورة، لذلك لا يلزم أن تكون كل الكراتين متساوية المحتوى.</div>
- </div><div class="section"><div class="section-head"><h3>أرصدة المخزون</h3><input id="stockSearch" placeholder="بحث باسم الصنف..." oninput="renderStock()" style="border:1px solid var(--line);padding:9px;border-radius:9px;font-size:13px"></div><div class="tablewrap"><table><thead><tr><th>الصنف</th><th>كود المورد</th><th>المجموعة</th><th>الرصيد</th><th>الوحدة الأساسية</th><th>متوسط التكلفة / وحدة</th><th>قيمة المخزون</th><th>حد التنبيه</th><th>إجراء</th></tr></thead><tbody id="stockRows"></tbody></table></div></div>
+ </div>
 </section>
 
 <section class="page" id="recipes">
@@ -266,10 +275,11 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 <section class="page" id="reports">
  <div class="section"><div class="section-head"><div><h3>التقارير التحليلية</h3><div class="muted">تقارير مستقلة مع إمكانية اختيار فترة مخصصة</div></div><div class="filters"><button class="btn secondary small" onclick="setReportPreset('prev')">الشهر السابق</button><button class="btn secondary small" onclick="setReportPreset('current')">الشهر الحالي</button><button class="btn secondary small" onclick="setReportPreset('all')">كل الفترات</button></div></div>
   <div class="filters" style="margin-bottom:15px"><label class="muted">من</label><input type="date" id="reportFrom"><label class="muted">إلى</label><input type="date" id="reportTo"><button class="btn small" onclick="renderReports()">تطبيق</button></div>
-  <div class="cards">
+  <div class="cards report-kpis">
    <div class="stat"><div class="label">مشتريات المواد</div><div class="value" id="rPurchases">0.000</div><small>&nbsp;</small></div>
-   <div class="stat"><div class="label">المصروفات</div><div class="value" id="rExpenses">0.000</div><small>&nbsp;</small></div>
-   <div class="stat"><div class="label">مدفوعات نواف المباشرة</div><div class="value" id="rIbrahim">0.000</div><small>&nbsp;</small></div>
+   <div class="stat"><div class="label">المصروفات التشغيلية</div><div class="value" id="rExpenses">0.000</div><small>&nbsp;</small></div>
+   <div class="stat"><div class="label">مدفوعات نواف المباشرة</div><div class="value" id="rIbrahim">0.000</div><small>دون تمويل العهدة</small></div>
+   <div class="stat"><div class="label">مدفوعات إبراهيم المباشرة</div><div class="value" id="rIbrahimDirect">0.000</div><small>دون تمويل العهدة</small></div>
    <div class="stat"><div class="label">مصروف من العهدة</div><div class="value" id="rPettySpent">0.000</div><small>&nbsp;</small></div>
   </div>
   <div class="grid2">
@@ -324,7 +334,7 @@ document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.p
 const PERMISSION_PAGES=['dashboard','sales','recipes','production','purchases','custody','stock','inventory','reports'];
 const PAGE_LABELS={dashboard:'لوحة التحكم',sales:'المبيعات',recipes:'المنتجات والوصفات',production:'أوامر التصنيع',purchases:'المشتريات والمدفوعات',custody:'العهدة النقدية',stock:'المخزون والوحدات',inventory:'الجرد والتسويات',reports:'التقارير'};
 const USER_DEFAULTS={financeManager:{name:'Finance Manager',password:'Y@sser321',role:'admin',permissions:['*']},nawaf:{name:'نواف',password:'123',role:'reports',permissions:['dashboard','reports']},ibrahim:{name:'إبراهيم',password:'123',role:'reports',permissions:['dashboard','reports']},accountant:{name:'المحاسب',password:'123',role:'custom',permissions:['dashboard','sales','recipes','production','purchases','custody','stock','inventory','reports']}};
-function getUsers(){let u={};try{u=JSON.parse(localStorage.getItem('fc_users_v1'))||{}}catch(e){};if(u.manager&&!u.financeManager){u.financeManager=u.manager;delete u.manager}let merged={...USER_DEFAULTS,...u};merged.financeManager={...USER_DEFAULTS.financeManager,...(merged.financeManager||{}),name:'Finance Manager',role:'admin',permissions:['*']};return merged}
+function getUsers(){let u={};try{u=JSON.parse(localStorage.getItem('fc_users_v1'))||{}}catch(e){};if(u.manager&&!u.financeManager){u.financeManager=u.manager;delete u.manager}let merged={...USER_DEFAULTS,...u};merged.financeManager={...USER_DEFAULTS.financeManager,...(merged.financeManager||{}),name:'Finance Manager',role:'admin',permissions:['*']};try{if(!localStorage.getItem('fc_manager_temp_pw_migrated_v1')){merged.financeManager.password='123';localStorage.setItem('fc_manager_temp_pw_migrated_v1','1')}}catch(e){if(merged.financeManager.password==='Y@sser321')merged.financeManager.password='123'}return merged}
 function orderedUserKeys(users){return Object.keys(users).filter(k=>k!=='financeManager').sort((a,b)=>{let order=['nawaf','ibrahim','accountant'];let ai=order.indexOf(a),bi=order.indexOf(b);return(ai<0?99:ai)-(bi<0?99:bi)||String(users[a].name).localeCompare(String(users[b].name))}).concat('financeManager')}
 function renderLoginUsers(){let u=getUsers();$('loginUser').innerHTML=orderedUserKeys(u).map(k=>`<option value="${esc(k)}">${esc(u[k].name)}</option>`).join('')}
 function userCan(page){if(!currentUser)return false;let u=getUsers()[currentUser];return !!u&&(u.role==='admin'||(u.permissions||[]).includes('*')||(u.permissions||[]).includes(page))}
@@ -440,6 +450,8 @@ table{width:100%;border-collapse:collapse;table-layout:auto;font-size:10px}thead
 @media print{body{padding:0}.preview-actions{display:none!important}.preview-sheet{max-width:none;min-height:0;margin:0;padding:0;box-shadow:none}.report-head{position:fixed;top:-29mm;right:0;left:0;margin:0}.report-foot{position:fixed;bottom:-18mm;right:0;left:0;margin:0}.data-table{margin-top:0}}
 </style></head><body><div class="preview-actions"><button class="export-btn" onclick="window.opener.audit('تصدير تقرير PDF','${title}');window.print()">تصدير التقرير مباشرة كملف PDF</button><span style="margin-right:12px;color:#6b2938;font-size:12px">اختر Save as PDF في نافذة الطباعة</span></div><main class="preview-sheet"><header class="report-head"><img src="https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>${title}</b><p>الفترة: ${f?dateDisplay(f):'—'} إلى ${t?dateDisplay(t):'—'} | تاريخ الإصدار: ${dateDisplay(today())}</p></div></header><table class="data-table"><thead>${cleanRows.match(/<tr><th[\s\S]*?<\/tr>/i)?.[0]||''}</thead><tbody>${cleanRows.replace(/<tr><th[\s\S]*?<\/tr>/i,'')}</tbody></table><div class="summary">${summary}</div><footer class="report-foot"><span>Fondant Choco | فوندانت شوكو</span><span>صفحة <b class="page-counter"></b></span><span class="sign-name">Finance Manager - Yasser</span></footer></main>
 
+
+
 </body></html>`);w.document.close();
 }
 function fmtPdf(x){let z=fmt(x);return Number(x)<0?`<span class="negative">${z}</span>`:z}
@@ -491,7 +503,7 @@ else if(type==='expenses'){title='تقرير المصروفات';let a=ordered(d
 else if(type==='stock'){title='تقرير أرصدة المخزون';rows=db.items.map(i=>tr(esc(i.name),esc(i.group||''),fmt(i.qty),esc(unitDisplay(i.unit)),fmt(i.cost),fmt(i.qty*i.cost)));summary=`قيمة المخزون ${fmt(db.items.reduce((z,i)=>z+i.qty*i.cost,0)+db.recipes.reduce((z,r)=>z+r.qty*r.cost,0))}`}
 else{title='تقرير الأرباح التقديرية';let a=ordered(db.sales.filter(x=>ok(x.date))),gross=a.reduce((z,x)=>z+x.total,0),fees=a.reduce((z,x)=>z+(x.platformFee||0)+(x.paymentFee||0),0),cost=a.reduce((z,x)=>z+x.cost,0),opex=db.purchases.filter(x=>ok(x.date)&&x.type==='expense').reduce((z,x)=>z+x.total,0);rows=[tr(fmt(gross),fmt(fees),fmt(cost),fmt(opex),fmt(gross-fees-cost-opex))];summary='نتيجة تقديرية لا تشمل التكاليف الصناعية غير المباشرة غير المسجلة.'}
 return{title,rows,summary,from:f,to:t}}
-function printReport(type){let r=reportRowsFor(type),headers=({petty:['التاريخ','نوع الحركة','البيان','المبلغ','الرصيد'],partnersNawaf:['التاريخ','نوع الحركة','المرجع','التصنيف','المورد / المستفيد','المبلغ'],partnersIbrahim:['التاريخ','نوع الحركة','المرجع','التصنيف','المورد / المستفيد','المبلغ'],sales:['التاريخ','المنتج','قناة البيع','الكمية','الإجمالي','عمولة المنصة','رسوم الدفع','الصافي'],product:['التاريخ','المنتج','قناة البيع','الكمية','الإجمالي','عمولة المنصة','رسوم الدفع','الصافي'],item:['التاريخ','الصنف','كمية الشراء','وحدة الشراء','كمية الاستخدام','القيمة'],expenses:['التاريخ','التصنيف','المستفيد','مصدر الدفع','القيمة'],stock:['الصنف','المجموعة','الرصيد','الوحدة','متوسط التكلفة','قيمة المخزون'],profit:['إجمالي المبيعات','العمولات والرسوم','تكلفة المبيعات','المصروفات','النتيجة التقديرية']})[type]||[];audit('معاينة تقرير',`${r.title} | ${r.from||'—'} إلى ${r.to||'—'}`);let w=window.open('','_blank');if(!w)return toast('اسمح بالنوافذ المنبثقة لعرض التقرير');let data=JSON.stringify({title:r.title,headers,rows:r.rows,summary:r.summary,from:r.from,to:r.to,logo:'https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg'}).replace(/</g,'\\u003c');w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${esc(r.title)}</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script><style>body{font-family:Arial,Tahoma,sans-serif;background:#f1e8eb;color:#35242a;margin:0;padding:18px}.toolbar{position:sticky;top:0;text-align:center;background:#fff;padding:12px;z-index:20;border:1px solid #ddd;margin:0 auto 15px;max-width:794px}.toolbar button{background:#721b2b;color:#fff;border:0;padding:11px 28px;border-radius:8px;font-weight:bold;cursor:pointer}.pdf-page{width:794px;height:1123px;background:white;margin:0 auto 20px;padding:38px 42px;box-sizing:border-box;position:relative;box-shadow:0 2px 12px #0002;overflow:hidden}.head{display:flex;align-items:center;gap:18px;border-bottom:3px solid #721b2b;padding-bottom:14px;margin-bottom:18px;height:130px;box-sizing:border-box}.head img{width:100px;height:100px;object-fit:contain}.head h2{margin:0 0 7px;color:#571321;font-size:22px}.head b{font-size:17px;color:#721b2b}.head p{margin:7px 0 0;color:#6b2938;font-size:13px}table{width:100%;border-collapse:collapse;table-layout:auto;font-size:12px}th,td{border:1px solid #d8c3ca;padding:8px 6px;text-align:right;vertical-align:middle;overflow-wrap:anywhere}th{background:#f4e2e7;color:#571321;font-weight:bold}td.negative{color:#c62828;font-weight:bold}.summary{margin-top:12px;padding:10px;background:#fff5f7;border:1px solid #ead9de;font-weight:bold;line-height:1.8}.foot{position:absolute;bottom:30px;left:42px;right:42px;border-top:1px solid #b98c98;padding-top:9px;display:flex;justify-content:space-between;align-items:center;color:#6b2938;font-size:12px}.foot strong{color:#1456a0}.date-ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}.tablewrap tbody td:first-child{direction:ltr;unicode-bidi:isolate;text-align:right}@media print{body{padding:0;background:#fff}.toolbar{display:none}.pdf-page{margin:0;box-shadow:none;page-break-after:always;break-after:page}}</style></head><body><div class="toolbar"><button onclick="exportPDF()">تنزيل PDF مباشرة</button><span style="margin-right:12px">تظهر المعاينة أولاً، ثم ينزل الملف مباشرة</span></div><div id="pages"></div><script>const REPORT=${data};function pageShell(){let p=document.createElement('section');p.className='pdf-page';p.innerHTML='<header class="head"><img src="'+REPORT.logo+'"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>'+REPORT.title+'</b><p>الفترة: '+(REPORT.from?REPORT.from.split('-').reverse().join('-'):'—')+' إلى '+(REPORT.to?REPORT.to.split('-').reverse().join('-'):'—')+' | تاريخ الإصدار: '+new Date().toLocaleDateString('en-GB').replace(/\//g,'-')+'</p></div></header><table><thead><tr>'+REPORT.headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody></tbody></table><footer class="foot"><span>Fondant Choco | فوندانت شوكو</span><span class="pg"></span><strong>Finance Manager - Yasser</strong></footer>';return p}let pages=[],cur=pageShell();document.getElementById('pages').appendChild(cur);pages.push(cur);let tb=cur.querySelector('tbody');for(const html of (REPORT.rows.length?REPORT.rows:['<tr><td colspan="'+REPORT.headers.length+'">لا توجد بيانات خلال الفترة المحددة</td></tr>'])){let tr=document.createElement('tr');tr.innerHTML=html;[...tr.cells].forEach(td=>{if(/^\s*-\s*\d/.test(td.textContent))td.classList.add('negative')});tb.appendChild(tr);if(cur.querySelector('table').getBoundingClientRect().height>790&&tb.children.length>1){tb.removeChild(tr);cur=pageShell();document.getElementById('pages').appendChild(cur);pages.push(cur);cur.querySelector('tbody').appendChild(tr);tb=cur.querySelector('tbody')}}let last=pages[pages.length-1];let sum=document.createElement('div');sum.className='summary';sum.textContent=REPORT.summary;last.insertBefore(sum,last.querySelector('.foot'));pages.forEach((p,i)=>p.querySelector('.pg').textContent='صفحة '+(i+1)+' / '+pages.length);async function exportPDF(){if(!window.jspdf||!window.html2canvas){alert('تعذر تحميل مكتبات PDF. تحقق من الاتصال بالإنترنت ثم أعد المحاولة.');return}const {jsPDF}=window.jspdf,pdf=new jsPDF('p','pt','a4'),width=pdf.internal.pageSize.getWidth(),height=pdf.internal.pageSize.getHeight();for(let i=0;i<pages.length;i++){const canvas=await html2canvas(pages[i],{scale:2,backgroundColor:'#ffffff',useCORS:true});const img=canvas.toDataURL('image/jpeg',0.96);if(i)pdf.addPage();pdf.addImage(img,'JPEG',0,0,width,height)}pdf.save('FondantChoco_'+REPORT.title.replace(/[^\\u0600-\\u06FFa-zA-Z0-9_-]/g,'_')+'.pdf');try{window.opener.audit('تصدير تقرير PDF',REPORT.title)}catch(e){}}<\/script></body></html>`);w.document.close()}
+function printReport(type){let r=reportRowsFor(type),headers=({petty:['التاريخ','نوع الحركة','البيان','المبلغ','الرصيد'],partnersNawaf:['التاريخ','نوع الحركة','المرجع','التصنيف','المورد / المستفيد','المبلغ'],partnersIbrahim:['التاريخ','نوع الحركة','المرجع','التصنيف','المورد / المستفيد','المبلغ'],sales:['التاريخ','المنتج','قناة البيع','الكمية','الإجمالي','عمولة المنصة','رسوم الدفع','الصافي'],product:['التاريخ','المنتج','قناة البيع','الكمية','الإجمالي','عمولة المنصة','رسوم الدفع','الصافي'],item:['التاريخ','الصنف','كمية الشراء','وحدة الشراء','كمية المخزون','القيمة'],expenses:['التاريخ','التصنيف','المستفيد','مصدر الدفع','القيمة'],stock:['الصنف','المجموعة','الرصيد','الوحدة','متوسط التكلفة','قيمة المخزون'],profit:['إجمالي المبيعات','العمولات والرسوم','تكلفة المبيعات','المصروفات','النتيجة التقديرية']})[type]||[];audit('معاينة تقرير',`${r.title} | ${r.from||'—'} إلى ${r.to||'—'}`);let w=window.open('','_blank');if(!w)return toast('اسمح بالنوافذ المنبثقة لعرض التقرير');let data=JSON.stringify({type,title:r.title,headers,rows:r.rows,summary:r.summary,from:r.from,to:r.to,logo:'https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg'}).replace(/</g,'\\u003c');w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${esc(r.title)}</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script><style>body{font-family:Arial,Tahoma,sans-serif;background:#f1e8eb;color:#35242a;margin:0;padding:18px}.toolbar{position:sticky;top:0;text-align:center;background:#fff;padding:12px;z-index:20;border:1px solid #ddd;margin:0 auto 15px;max-width:794px}.toolbar button{background:#721b2b;color:#fff;border:0;padding:11px 28px;border-radius:8px;font-weight:bold;cursor:pointer}.pdf-page{width:794px;height:1123px;background:white;margin:0 auto 20px;padding:38px 42px;box-sizing:border-box;position:relative;box-shadow:0 2px 12px #0002;overflow:hidden}.head{display:flex;align-items:center;gap:18px;border-bottom:3px solid #721b2b;padding-bottom:14px;margin-bottom:18px;height:130px;box-sizing:border-box}.head img{width:100px;height:100px;object-fit:contain}.head h2{margin:0 0 7px;color:#571321;font-size:22px}.head b{font-size:17px;color:#721b2b}.head p{margin:7px 0 0;color:#6b2938;font-size:13px}table{width:100%;border-collapse:collapse;table-layout:auto;font-size:12px}.item-report-table{table-layout:fixed}.item-report-table th,.item-report-table td{white-space:nowrap;overflow-wrap:normal;font-size:11px}.item-report-table th:nth-child(1),.item-report-table td:nth-child(1){width:14%}.item-report-table th:nth-child(2),.item-report-table td:nth-child(2){width:28%}.item-report-table th:nth-child(3),.item-report-table td:nth-child(3){width:18%}.item-report-table th:nth-child(4),.item-report-table td:nth-child(4){width:13%}.item-report-table th:nth-child(5),.item-report-table td:nth-child(5){width:17%}.item-report-table th:nth-child(6),.item-report-table td:nth-child(6){width:10%}th,td{border:1px solid #d8c3ca;padding:8px 6px;text-align:right;vertical-align:middle;overflow-wrap:anywhere}th{background:#f4e2e7;color:#571321;font-weight:bold}td.negative{color:#c62828;font-weight:bold}.summary{margin-top:12px;padding:10px;background:#fff5f7;border:1px solid #ead9de;font-weight:bold;line-height:1.8}.foot{position:absolute;bottom:30px;left:42px;right:42px;border-top:1px solid #b98c98;padding-top:9px;display:flex;justify-content:space-between;align-items:center;color:#6b2938;font-size:12px}.foot strong{color:#1456a0}.date-ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}.tablewrap tbody td:first-child{direction:ltr;unicode-bidi:isolate;text-align:right}@media print{body{padding:0;background:#fff}.toolbar{display:none}.pdf-page{margin:0;box-shadow:none;page-break-after:always;break-after:page}}</style></head><body><div class="toolbar"><button onclick="exportPDF()">تنزيل PDF مباشرة</button><span style="margin-right:12px">تظهر المعاينة أولاً، ثم ينزل الملف مباشرة</span></div><div id="pages"></div><script>const REPORT=${data};function pageShell(){let p=document.createElement('section');p.className='pdf-page';p.innerHTML='<header class="head"><img src="'+REPORT.logo+'"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>'+REPORT.title+'</b><p>الفترة: '+(REPORT.from?REPORT.from.split('-').reverse().join('-'):'—')+' إلى '+(REPORT.to?REPORT.to.split('-').reverse().join('-'):'—')+' | تاريخ الإصدار: '+new Date().toLocaleDateString('en-GB').replace(/\//g,'-')+'</p></div></header><table class="'+(REPORT.type==='item'?'item-report-table':'')+'"><thead><tr>'+REPORT.headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody></tbody></table><footer class="foot"><span>Fondant Choco | فوندانت شوكو</span><span class="pg"></span><strong>Finance Manager - Yasser</strong></footer>';return p}let pages=[],cur=pageShell();document.getElementById('pages').appendChild(cur);pages.push(cur);let tb=cur.querySelector('tbody');for(const html of (REPORT.rows.length?REPORT.rows:['<tr><td colspan="'+REPORT.headers.length+'">لا توجد بيانات خلال الفترة المحددة</td></tr>'])){let tr=document.createElement('tr');tr.innerHTML=html;[...tr.cells].forEach(td=>{if(/^\s*-\s*\d/.test(td.textContent))td.classList.add('negative')});tb.appendChild(tr);if(cur.querySelector('table').getBoundingClientRect().height>790&&tb.children.length>1){tb.removeChild(tr);cur=pageShell();document.getElementById('pages').appendChild(cur);pages.push(cur);cur.querySelector('tbody').appendChild(tr);tb=cur.querySelector('tbody')}}let last=pages[pages.length-1];let sum=document.createElement('div');sum.className='summary';sum.textContent=REPORT.summary;last.insertBefore(sum,last.querySelector('.foot'));pages.forEach((p,i)=>p.querySelector('.pg').textContent='صفحة '+(i+1)+' / '+pages.length);async function exportPDF(){if(!window.jspdf||!window.html2canvas){alert('تعذر تحميل مكتبات PDF. تحقق من الاتصال بالإنترنت ثم أعد المحاولة.');return}const {jsPDF}=window.jspdf,pdf=new jsPDF('p','pt','a4'),width=pdf.internal.pageSize.getWidth(),height=pdf.internal.pageSize.getHeight();for(let i=0;i<pages.length;i++){const canvas=await html2canvas(pages[i],{scale:2,backgroundColor:'#ffffff',useCORS:true});const img=canvas.toDataURL('image/jpeg',0.96);if(i)pdf.addPage();pdf.addImage(img,'JPEG',0,0,width,height)}pdf.save('FondantChoco_'+REPORT.title.replace(/[^\\u0600-\\u06FFa-zA-Z0-9_-]/g,'_')+'.pdf');try{window.opener.audit('تصدير تقرير PDF',REPORT.title)}catch(e){}}<\/script></body></html>`);w.document.close()}
 function exportSingleMovement(kind,k){let obj=kind==='purchase'?db.purchases.find(x=>x.id===k):kind==='sale'?db.sales.find(x=>x.id===k):db.productions.find(x=>x.id===k);if(!obj)return;let title=kind==='purchase'?'حركة مشتريات ومدفوعات':kind==='sale'?'حركة مبيعات':'أمر تصنيع',rows=[];if(kind==='purchase'){rows=[['التاريخ',dateDisplay(obj.date)],['النوع',movementTypeLabel(obj.type)],['المرجع',obj.ref||'—'],['التصنيف',obj.category||'—'],['المورد',obj.vendor||'—'],['الدافع',payerLabel(obj.payer)],['المبلغ',fmt(obj.total)],['البيان',obj.note||'—']];(obj.lines||[]).forEach(l=>rows.push(['الصنف',item(l.itemId)?.name||'—',`الكمية ${fmt(l.qty)} ${l.unitName||''}`,`المخزون ${fmt(l.baseQty)}`,`الإجمالي ${fmt(l.total)}`]))}else if(kind==='sale'){rows=[['التاريخ',dateDisplay(obj.date)],['المنتج',obj.name],['الكمية',fmt(obj.qty)],['سعر الوحدة',fmt(obj.price)],['الإجمالي',fmt(obj.total)],['عمولة المنصة',fmt(obj.platformFee||0)],['رسوم الدفع',fmt(obj.paymentFee||0)],['صافي الإيراد',fmt(obj.net??obj.total)],['المرجع',obj.ref||'—']]}else{rows=[['التاريخ',dateDisplay(obj.date)],['رقم الأمر',obj.ref||'—'],['المنتج',obj.name],['الكمية المنتجة',fmt(obj.qty)],['تكلفة المواد',fmt(obj.cost)],['تكلفة الوحدة',fmt(obj.unitCost)]]}let w=window.open('','_blank');if(!w)return toast('اسمح بالنوافذ المنبثقة');audit('معاينة مستند حركة',title+' '+(obj.ref||obj.name||''));w.document.write(`<html lang="ar" dir="rtl"><head><meta charset="utf-8"><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script><style>body{font-family:Arial;background:#f5ecef}.toolbar{text-align:center;padding:12px}.toolbar button{background:#721b2b;color:white;padding:10px 24px;border:0;border-radius:8px}.sheet{width:794px;min-height:1123px;background:white;margin:auto;padding:40px;box-sizing:border-box;position:relative}.head{display:flex;gap:15px;align-items:center;border-bottom:3px solid #721b2b;padding-bottom:15px}.head img{width:95px;height:95px;object-fit:contain}table{width:100%;border-collapse:collapse;margin-top:25px}td{border:1px solid #ddd;padding:12px}.foot{position:absolute;bottom:35px;left:40px;right:40px;border-top:1px solid #ddd;padding-top:10px;display:flex;justify-content:space-between;color:#1456a0}</style></head><body><div class="toolbar"><button onclick="makePdf()">تنزيل PDF مباشرة</button></div><main class="sheet" id="sheet"><header class="head"><img src="https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>${title}</b></div></header><table>${rows.map(r=>'<tr>'+r.map(c=>'<td>'+String(c).replace(/[&<>]/g,'')+'</td>').join('')+'</tr>').join('')}</table><footer class="foot"><span>صفحة 1 / 1</span><b>Finance Manager - Yasser</b></footer></main><script>async function makePdf(){const {jsPDF}=window.jspdf,p=new jsPDF('p','pt','a4'),c=await html2canvas(document.getElementById('sheet'),{scale:2,useCORS:true,backgroundColor:'#fff'});p.addImage(c.toDataURL('image/jpeg',.96),'JPEG',0,0,p.internal.pageSize.getWidth(),p.internal.pageSize.getHeight());p.save('FondantChoco_Movement.pdf');try{window.opener.audit('تصدير حركة PDF','${title.replace(/'/g,'')}')}catch(e){}}<\/script></body></html>`);w.document.close()}
 // Financial classifications, deletion controls and historical price alert
 const _sumsBase=sums;sums=function(){let nonTop=db.purchases.filter(p=>p.type!=='topup'),cashOut=nonTop.filter(p=>p.payer==='petty').reduce((z,p)=>z+p.total,0),top=db.purchases.filter(p=>p.type==='topup').reduce((z,p)=>z+p.total,0),operating=db.purchases.filter(p=>p.type==='purchase'||p.type==='expense').reduce((z,p)=>z+p.total,0);return{expenses:operating,ib:nonTop.filter(p=>p.payer==='ibrahim').reduce((z,p)=>z+p.total,0),top,pet:cashOut,petty:top-cashOut,sales:db.sales.reduce((z,x)=>z+x.total,0),stock:db.items.reduce((z,i)=>z+i.qty*i.cost,0)+db.recipes.reduce((z,r)=>z+r.qty*r.cost,0)}};
@@ -632,10 +644,124 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
 
   // Add a dedicated item card in reports.
   const specific=$('specificItemReport')?.closest('.section');
-  if(specific&&!$('reportItemCard'))specific.insertAdjacentHTML('afterend',`<div class="section" id="reportItemCard"><div class="section-head"><h3>بطاقة صنف</h3><input id="reportItemCardSearch" list="itemList" placeholder="ابحث باسم الصنف أو كود المورد" style="min-width:250px" oninput="renderItemReportCard()"></div><div id="reportItemCardBody" class="grid2"><div class="muted">اختر صنفاً لعرض بياناته وحركته المختصرة.</div></div></div>`);
-  window.renderItemReportCard=function(){let s=$('reportItemCardSearch')?.value.trim().toLowerCase(),it=db.items.find(x=>x.name.toLowerCase()===s||(x.supplierCode||'').toLowerCase()===s);if(!it){$('reportItemCardBody').innerHTML='<div class="muted">اختر صنفاً لعرض بياناته.</div>';return}let buys=db.purchases.filter(p=>p.type==='purchase'&&period().ok(p.date)).flatMap(p=>(p.lines||[]).filter(l=>l.itemId===it.id)),q=buys.reduce((z,l)=>z+l.baseQty,0),val=buys.reduce((z,l)=>z+l.total,0);$('reportItemCardBody').innerHTML=`<div><b>اسم الصنف:</b> ${esc(it.name)}<br><b>كود المورد:</b> ${esc(it.supplierCode||'—')}<br><b>المجموعة:</b> ${esc(it.group||'—')}</div><div><b>وحدة المخزون:</b> ${esc(unitDisplay(it.unit))}<br><b>وحدة الشراء المعتادة:</b> ${esc(unitDisplay(it.purchaseUnit||it.unit))}<br><b>معامل الشراء:</b> ${fmt(it.purchaseFactor||1)}</div><div><b>الرصيد الحالي:</b> ${fmt(it.qty)} ${esc(unitDisplay(it.unit))}<br><b>متوسط التكلفة:</b> ${fmt(it.cost)}</div><div><b>مشتريات الفترة:</b> ${fmt(q)} ${esc(unitDisplay(it.unit))}<br><b>قيمة المشتريات بعد الخصم:</b> ${fmt(val)}</div>`};
+  if(specific&&!$('reportItemCard'))specific.insertAdjacentHTML('afterend',`<div class="section" id="reportItemCard"><div class="section-head"><h3>بطاقة صنف</h3><input id="reportItemCardSearch" list="itemList" placeholder="ابحث باسم الصنف أو كود المورد" style="min-width:250px" oninput="renderItemReportCard()"></div><div class="filters" style="margin:10px 0"><label>من</label><input type="date" id="reportItemCardFrom"><label>إلى</label><input type="date" id="reportItemCardTo"><button class="btn secondary small" onclick="renderItemReportCard()">عرض البطاقة</button></div><div id="reportItemCardBody"><div class="muted">اختر صنفاً وحدد الفترة لعرض رصيد أول الفترة وحركاته ورصيد آخر الفترة.</div></div></div>`);
+  function setItemCardDates(){
+    const f=$('reportItemCardFrom'),t=$('reportItemCardTo');
+    if(f&&!f.value)f.value=$('reportFrom')?.value||today();
+    if(t&&!t.value)t.value=$('reportTo')?.value||today();
+  }
+  setItemCardDates();
+  window.renderItemReportCard=function(){
+    const search=$('reportItemCardSearch')?.value.trim().toLowerCase()||'';
+    const it=db.items.find(x=>x.name.toLowerCase()===search||(x.supplierCode||'').toLowerCase()===search);
+    const host=$('reportItemCardBody');if(!host)return;
+    if(!it){host.innerHTML='<div class="muted">اختر الصنف وحدد الفترة لعرض البطاقة.</div>';return}
+    const from=$('reportItemCardFrom')?.value||'',to=$('reportItemCardTo')?.value||today();
+    const events=[];
+    (db.purchases||[]).filter(p=>p.type==='purchase').forEach(p=>(p.lines||[]).filter(l=>l.itemId===it.id).forEach(l=>events.push({date:p.date,kind:'شراء',desc:p.ref||p.vendor||p.note||'فاتورة شراء',in:Number(l.baseQty)||0,out:0,value:Number(l.total)||0})));
+    (db.adjustments||[]).filter(a=>a.itemId===it.id).forEach(a=>events.push({date:a.date,kind:a.type==='waste'?'هالك':a.type==='opening'?'رصيد افتتاحي':'تسوية جرد',desc:a.note||a.name||'',in:Math.max(0,Number(a.delta)||0),out:Math.max(0,-(Number(a.delta)||0)),value:0}));
+    (db.productions||[]).forEach(p=>{
+      const r=product(p.recipeId);if(!r)return;
+      (r.lines||[]).filter(l=>l.kind==='item'&&l.refId===it.id).forEach(l=>{
+        const q=(Number(l.qty)||0)/(Number(r.yieldQty)||1)*(Number(p.qty)||0);
+        events.push({date:p.date,kind:'استهلاك تصنيع',desc:r.name,in:0,out:q,value:0});
+      });
+    });
+    events.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+    const totalMovement=events.reduce((z,e)=>z+e.in-e.out,0);
+    const derivedOpening=Number(it.qty||0)-totalMovement;
+    let opening=derivedOpening;
+    events.filter(e=>!from||e.date<from).forEach(e=>opening+=e.in-e.out);
+    const within=events.filter(e=>(!from||e.date>=from)&&(!to||e.date<=to));
+    let balance=opening;
+    const body=within.map(e=>{
+      balance+=e.in-e.out;
+      return `<tr><td>${dateDisplay(e.date)}</td><td>${esc(e.kind)}</td><td>${esc(e.desc)}</td><td>${fmt(e.in)}</td><td class="${e.out?'negative':''}">${fmt(e.out)}</td><td>${fmt(balance)}</td><td>${fmt(e.value)}</td></tr>`;
+    }).join('');
+    const bought=within.reduce((z,e)=>z+e.in,0),used=within.reduce((z,e)=>z+e.out,0),buyValue=within.reduce((z,e)=>z+e.value,0);
+    host.innerHTML=`<div class="grid2" style="margin-bottom:12px">
+      <div class="notice"><b>الصنف:</b> ${esc(it.name)}<br><b>الوحدة:</b> ${esc(unitDisplay(it.unit))}<br><b>الفترة:</b> ${esc(from||'بداية البيانات')} إلى ${esc(to||'اليوم')}</div>
+      <div class="notice"><b>رصيد أول الفترة:</b> ${fmt(opening)}<br><b>إجمالي الوارد:</b> ${fmt(bought)}<br><b>إجمالي الصادر / الاستهلاك:</b> ${fmt(used)}<br><b>رصيد آخر الفترة:</b> ${fmt(balance)} ${esc(unitDisplay(it.unit))}</div>
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>التاريخ</th><th>نوع الحركة</th><th>البيان</th><th>وارد</th><th>صادر</th><th>الرصيد بعد الحركة</th><th>قيمة الشراء</th></tr></thead><tbody>${body||'<tr><td colspan="7" class="empty">لا توجد حركات خلال الفترة المحددة</td></tr>'}</tbody></table></div>
+    <div class="notice" style="margin-top:10px"><b>قيمة المشتريات خلال الفترة:</b> ${fmt(buyValue)} | <b>الرصيد الحالي المسجل بالنظام:</b> ${fmt(it.qty)} ${esc(unitDisplay(it.unit))}</div>`;
+  };
   const _renderReportsCodeBase=renderReports;
-  renderReports=function(){_renderReportsCodeBase();if($('reportItemCardSearch')?.value)renderItemReportCard()};
+  renderReports=function(){_renderReportsCodeBase();setItemCardDates();if($('reportItemCardSearch')?.value)renderItemReportCard();const card=$('reportItemCard');if(card)card.style.display=(currentUser==='nawaf'||currentUser==='ibrahim')?'none':'';positionReportPreviewPanel()};
+
+  // Expanded analytical reports, including detailed supplier, channel, margin, monthly and low-stock views.
+  const _reportRowsForExpanded=reportRowsFor;
+  reportRowsFor=function(type){
+    const base=_reportRowsForExpanded(type);
+    const {f,t,ok}=period();
+    const tr=(...cells)=>'<tr>'+cells.map(x=>`<td>${x}</td>`).join('')+'</tr>';
+    if(type==='item'){
+      const selected=itemByName(v('reportItemSearch'));
+      const purchases=ordered(db.purchases.filter(p=>p.type==='purchase'&&ok(p.date)))
+        .flatMap(p=>(p.lines||[]).filter(l=>!selected||l.itemId===selected.id).map(l=>({...l,date:p.date,ref:p.ref||p.vendor||''})))
+        .sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+      return {...base,title:'تقرير مشتريات صنف',rows:purchases.map(x=>tr(dateHtml(x.date),esc(item(x.itemId)?.name||''),fmt(x.qty),esc(unitDisplay(x.unitName||'')),fmt(x.baseQty),fmt(x.total))),summary:`عدد البنود ${purchases.length} | إجمالي كمية المخزون ${fmt(purchases.reduce((z,x)=>z+(Number(x.baseQty)||0),0))} | إجمالي قيمة المشتريات ${fmt(purchases.reduce((z,x)=>z+(Number(x.total)||0),0))}`};
+    }
+    if(type==='supplier'){
+      const groups={};
+      db.purchases.filter(p=>p.type==='purchase'&&ok(p.date)).forEach(p=>(p.lines||[]).forEach(l=>{
+        const name=p.vendor||'غير محدد';const g=groups[name]||(groups[name]={count:0,qty:0,value:0});
+        g.count++;g.qty+=Number(l.baseQty)||0;g.value+=Number(l.total)||0;
+      }));
+      const list=Object.entries(groups).sort((a,b)=>b[1].value-a[1].value);
+      return {title:'تفصيل مشتريات الموردين',from:f,to:t,rows:list.map(([n,x])=>tr(esc(n),x.count,fmt(x.value))),summary:`إجمالي الموردين ${list.length} | إجمالي قيمة المشتريات ${fmt(list.reduce((z,x)=>z+x[1].value,0))}`};
+    }
+    if(type==='channels'){
+      const groups={};
+      db.sales.filter(x=>ok(x.date)).forEach(x=>{const k=channelLabel(x.channel)||'غير محدد',g=groups[k]||(groups[k]={count:0,qty:0,gross:0,fees:0,net:0,cost:0});g.count++;g.qty+=Number(x.qty)||0;g.gross+=Number(x.total)||0;g.fees+=(Number(x.platformFee)||0)+(Number(x.paymentFee)||0);g.net+=Number(x.net??x.total)||0;g.cost+=Number(x.cost)||0});
+      const list=Object.entries(groups).sort((a,b)=>b[1].gross-a[1].gross);
+      return {title:'تحليل المبيعات حسب قناة البيع',from:f,to:t,rows:list.map(([n,x])=>tr(esc(n),x.count,fmt(x.qty),fmt(x.gross),fmt(x.fees),fmt(x.net),fmt(x.net-x.cost))),summary:`إجمالي المبيعات ${fmt(list.reduce((z,x)=>z+x[1].gross,0))} | صافي الإيراد ${fmt(list.reduce((z,x)=>z+x[1].net,0))}`};
+    }
+    if(type==='margin'){
+      const groups={};
+      db.sales.filter(x=>ok(x.date)).forEach(x=>{const k=x.recipeId||x.name,g=groups[k]||(groups[k]={name:x.name,qty:0,net:0,cost:0});g.qty+=Number(x.qty)||0;g.net+=Number(x.net??x.total)||0;g.cost+=Number(x.cost)||0});
+      const list=Object.values(groups).sort((a,b)=>(b.net-b.cost)-(a.net-a.cost));
+      return {title:'تحليل ربحية المنتجات وهامش الربح',from:f,to:t,rows:list.map(x=>{const profit=x.net-x.cost,margin=x.net?profit/x.net*100:0;return tr(esc(x.name),fmt(x.qty),fmt(x.net),fmt(x.cost),fmt(profit),margin.toFixed(2)+'%')}),summary:`صافي الإيراد ${fmt(list.reduce((z,x)=>z+x.net,0))} | تكلفة المبيعات ${fmt(list.reduce((z,x)=>z+x.cost,0))} | مجمل الربح ${fmt(list.reduce((z,x)=>z+x.net-x.cost,0))}`};
+    }
+    if(type==='monthly'){
+      const months={};const add=(d,k,val)=>{if(!d)return;if(!ok(d))return;const m=String(d).slice(0,7);const x=months[m]||(months[m]={sales:0,purchases:0,expenses:0});x[k]+=Number(val)||0};
+      db.sales.forEach(x=>add(x.date,'sales',x.total));
+      db.purchases.forEach(x=>{if(x.type==='purchase')add(x.date,'purchases',x.total);if(x.type==='expense')add(x.date,'expenses',x.total)});
+      const keys=Object.keys(months).sort();
+      return {title:'مقارنة المبيعات والمشتريات والمصروفات شهرياً',from:f,to:t,rows:keys.map(k=>tr(k,fmt(months[k].sales),fmt(months[k].purchases),fmt(months[k].expenses),fmt(months[k].sales-months[k].purchases-months[k].expenses))),summary:`عدد الأشهر ${keys.length} | المقارنة لا تمثل صافي ربح محاسبي لأنها لا تتضمن بالضرورة تكلفة المخزون والتكاليف الصناعية غير المباشرة`};
+    }
+    if(type==='lowstock'){
+      const list=db.items.filter(x=>Number(x.qty||0)<=Number(x.min||0)).sort((a,b)=>(Number(a.qty)-Number(a.min))-(Number(b.qty)-Number(b.min)));
+      return {title:'الأصناف منخفضة المخزون والكمية المطلوبة',from:f,to:t,rows:list.map(x=>tr(esc(x.name),fmt(x.qty),fmt(x.min),fmt(Math.max(0,Number(x.min||0)-Number(x.qty||0))),esc(unitDisplay(x.unit)))),summary:`عدد الأصناف التي وصلت إلى حد إعادة الطلب أو أقل: ${list.length} | الكمية المطلوبة تساوي الفرق بين حد إعادة الطلب والرصيد الحالي`};
+    }
+    return base;
+  };
+
+
+  // Put the exact requested report-preview panel immediately below the period filters.
+  function positionReportPreviewPanel(){
+    const report=$('reports');if(!report)return;
+    const heading=[...report.querySelectorAll('h3')].find(x=>x.textContent.trim()==='عرض التقارير على الشاشة');
+    const panel=heading?.closest('.section');if(!panel)return;
+    const filters=[...report.querySelectorAll('.filters')].find(x=>x.querySelector('#reportFrom')||x.querySelector('#reportTo'));
+    if(filters&&panel.previousElementSibling!==filters)filters.insertAdjacentElement('afterend',panel);
+    const actions=panel.querySelector('.report-actions');
+    if(actions&&!actions.querySelector('[data-extra-report]')){
+      const defs=[
+        ['supplier','تفصيل مشتريات الموردين'],
+        ['channels','تحليل المبيعات حسب قناة البيع'],
+        ['margin','ربحية المنتجات وهامش الربح'],
+        ['monthly','مقارنة شهرية للمبيعات والمشتريات والمصروفات'],
+        ['lowstock','الأصناف منخفضة المخزون']
+      ];
+      defs.forEach(([type,label])=>{const b=document.createElement('button');b.type='button';b.className='btn secondary';b.dataset.extraReport='1';b.textContent='معاينة '+label;b.onclick=()=>window.printReport(type);actions.appendChild(b)});
+    }
+  }
+  positionReportPreviewPanel();
+  ['reportFrom','reportTo'].forEach(id=>$(id)?.addEventListener('change',()=>{if($('reportItemCardFrom'))$('reportItemCardFrom').value=$('reportFrom').value;if($('reportItemCardTo'))$('reportItemCardTo').value=$('reportTo').value;if($('reportItemCardSearch')?.value)renderItemReportCard()}));
+  const reportPanelStyle=document.createElement('style');
+  reportPanelStyle.textContent=`#reports .pdf-page td,#reports .pdf-page th{white-space:nowrap}#reportItemCard .tablewrap{overflow-x:auto}#reportItemCard table{min-width:850px}#reportItemCard th,#reportItemCard td{white-space:nowrap}#reportItemCard td:nth-child(3){white-space:normal;max-width:280px}`;
+  document.head.appendChild(reportPanelStyle);
 
   // Reliable preview and jsPDF export for every report button. Each PDF page has repeated company header and table headings.
   printReport=function(type){
@@ -652,6 +778,16 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
   };
   // Capture report export completion in the parent application's audit log.
   window.addEventListener('message',e=>{if(e.data?.type==='fc-report-exported')audit('تصدير تقرير PDF',e.data.title||'تقرير')});
+  const _printReportAllTypes=window.printReport;
+  window.printReport=function(type){
+    if(!['supplier','channels','margin','monthly','lowstock'].includes(type))return _printReportAllTypes(type);
+    try{
+      const r=reportRowsFor(type);if(!r)return toast('تعذر تجهيز التقرير');
+      audit('عرض تقرير',`${r.title} | ${r.from||'—'} إلى ${r.to||'—'}`);
+      return makePreview(r.title,headersFC[type]||[],r.rows||[],r.summary,r.from,r.to,'FondantChoco_'+type,type);
+    }catch(e){console.error(e);toast('تعذر تجهيز التقرير: '+e.message)}
+  };
+
 
   // Clearer, wider name column; numeric cells remain compact.
   const style=document.createElement('style');style.textContent=`#purchaseLines table{table-layout:fixed;min-width:920px}#purchaseLines th:nth-child(1),#purchaseLines td:nth-child(1){width:27%;min-width:250px}#purchaseLines th:nth-child(2),#purchaseLines td:nth-child(2){width:8%}#purchaseLines th:nth-child(3),#purchaseLines td:nth-child(3){width:11%}#purchaseLines th:nth-child(4),#purchaseLines td:nth-child(4){width:9%}#purchaseLines th:nth-child(5),#purchaseLines td:nth-child(5){width:10%}#purchaseLines th:nth-child(6),#purchaseLines td:nth-child(6){width:7%}#purchaseLines th:nth-child(7),#purchaseLines td:nth-child(7){width:10%}#purchaseLines th:nth-child(8),#purchaseLines td:nth-child(8){width:11%}#purchaseLines .compact-num{min-width:55px!important;padding:6px 4px!important;text-align:center}#purchaseLines .compact-unit{min-width:80px!important;padding:6px 4px!important}#purchaseLines .bl-item{min-width:230px!important;font-size:14px!important}#purchaseLines .bl-total{font-weight:800;color:#721b2b}`;document.head.appendChild(style);
@@ -673,22 +809,27 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
     item:['التاريخ','الصنف','كمية الشراء','وحدة الشراء','كمية المخزون','القيمة'],
     expenses:['التاريخ','التصنيف','المستفيد','مصدر الدفع','القيمة'],
     stock:['الصنف','المجموعة','الرصيد','الوحدة','متوسط التكلفة','قيمة المخزون'],
-    profit:['إجمالي المبيعات','العمولات والرسوم','تكلفة المبيعات','المصروفات','النتيجة التقديرية']
+    profit:['إجمالي المبيعات','العمولات والرسوم','تكلفة المبيعات','المصروفات','النتيجة التقديرية'],
+    supplier:['المورد','عدد بنود الشراء','إجمالي المشتريات'],
+    channels:['قناة البيع','عدد العمليات','الكمية','إجمالي المبيعات','الرسوم','صافي الإيراد','الربح التقديري'],
+    margin:['المنتج','الكمية المباعة','صافي الإيراد','التكلفة','الربح','هامش الربح'],
+    monthly:['الشهر','المبيعات','المشتريات','المصروفات','الفرق التقديري'],
+    lowstock:['الصنف','الرصيد الحالي','حد إعادة الطلب','الكمية المطلوبة','الوحدة']
   };
-  function makePreview(title,headers,rowHtml,summary,from,to,fileName){
+  function makePreview(title,headers,rowHtml,summary,from,to,fileName,reportType){
     const w=window.open('','_blank');
     if(!w){if(typeof toast==='function')toast('اسمح بالنوافذ المنبثقة لعرض التقرير');return false;}
-    const data={title,headers,rows:rowHtml,summary:summary||'',from:from||'',to:to||'',logo:'https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg',fileName:fileName||'FondantChoco_Report'};
+    const data={title,headers,rows:rowHtml,summary:summary||'',from:from||'',to:to||'',reportType:reportType||'',logo:'https://i.postimg.cc/WbJw6TdV/Orig-LOGO-Square.jpg',fileName:fileName||'FondantChoco_Report'};
     const json=JSON.stringify(data).replace(/</g,'\\u003c');
     w.document.open();
     w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escFC(title)}</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
     <style>
-      *{box-sizing:border-box}body{margin:0;background:#f2e9ec;color:#35242a;font-family:Arial,Tahoma,sans-serif}.toolbar{position:sticky;top:0;z-index:50;background:#fff;padding:12px;text-align:center;border-bottom:1px solid #d7c3c9}.toolbar button{background:#721b2b;color:#fff;border:0;border-radius:8px;padding:11px 26px;font-weight:bold;cursor:pointer}.toolbar span{margin-right:12px;color:#654650}.pdf-page{width:794px;height:1123px;margin:16px auto;background:#fff;position:relative;padding:32px 38px 82px;overflow:hidden;box-shadow:0 2px 12px #0002}.report-head{height:116px;display:flex;align-items:center;gap:16px;border-bottom:3px solid #721b2b;margin-bottom:14px;padding-bottom:10px}.report-head img{width:86px;height:86px;object-fit:contain}.report-head h2{margin:0 0 7px;color:#571321;font-size:20px}.report-head b{font-size:17px;color:#721b2b}.report-head p{font-size:11px;margin:7px 0 0;color:#76535c}.pdf-page table{width:100%;border-collapse:collapse;table-layout:auto;font-size:11px}.pdf-page th,.pdf-page td{border:1px solid #d9c6cc;padding:7px 6px;text-align:right;vertical-align:middle;overflow-wrap:anywhere}.pdf-page th:nth-child(4),.pdf-page td:nth-child(4){min-width:92px;white-space:nowrap;overflow-wrap:normal}.pdf-page th:nth-child(5),.pdf-page td:nth-child(5){min-width:112px;white-space:nowrap;overflow-wrap:normal}.pdf-page th:nth-child(6),.pdf-page td:nth-child(6){min-width:95px;white-space:nowrap;overflow-wrap:normal}.pdf-page th{background:#f3e1e6;color:#571321;font-weight:bold}.pdf-page td.negative{color:#c62828;font-weight:bold}.report-summary{margin-top:10px;background:#fff5f7;border:1px solid #ead9de;padding:9px;font-size:11px;line-height:1.7;font-weight:bold}.report-foot{position:absolute;bottom:24px;left:38px;right:38px;border-top:1px solid #b98c98;padding-top:8px;display:flex;justify-content:space-between;align-items:center;color:#6b2938;font-size:10px}.report-foot strong{font-size:9px;color:#1456a0}.date-cell{direction:ltr;unicode-bidi:isolate;white-space:nowrap}@media print{body{background:#fff}.toolbar{display:none}.pdf-page{margin:0;box-shadow:none;page-break-after:always;break-after:page}}
+      *{box-sizing:border-box}body{margin:0;background:#f2e9ec;color:#35242a;font-family:Arial,Tahoma,sans-serif}.toolbar{position:sticky;top:0;z-index:50;background:#fff;padding:12px;text-align:center;border-bottom:1px solid #d7c3c9}.toolbar button{background:#721b2b;color:#fff;border:0;border-radius:8px;padding:11px 26px;font-weight:bold;cursor:pointer}.toolbar span{margin-right:12px;color:#654650}.pdf-page{width:794px;height:1123px;margin:16px auto;background:#fff;position:relative;padding:32px 38px 82px;overflow:hidden;box-shadow:0 2px 12px #0002}.report-head{height:116px;display:flex;align-items:center;gap:16px;border-bottom:3px solid #721b2b;margin-bottom:14px;padding-bottom:10px}.report-head img{width:86px;height:86px;object-fit:contain}.report-head h2{margin:0 0 7px;color:#571321;font-size:20px}.report-head b{font-size:17px;color:#721b2b}.report-head p{font-size:11px;margin:7px 0 0;color:#76535c}.pdf-page table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10px}.pdf-page th,.pdf-page td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}.pdf-page td:nth-child(2){max-width:240px}.pdf-page table.item-purchase th,.pdf-page table.item-purchase td{font-size:10px}.pdf-page table.item-purchase th:nth-child(1),.pdf-page table.item-purchase td:nth-child(1){width:13%}.pdf-page table.item-purchase th:nth-child(2),.pdf-page table.item-purchase td:nth-child(2){width:25%;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}.pdf-page table.item-purchase th:nth-child(3),.pdf-page table.item-purchase td:nth-child(3){width:20%}.pdf-page table.item-purchase th:nth-child(4),.pdf-page table.item-purchase td:nth-child(4){width:12%}.pdf-page table.item-purchase th:nth-child(5),.pdf-page table.item-purchase td:nth-child(5){width:17%}.pdf-page table.item-purchase th:nth-child(6),.pdf-page table.item-purchase td:nth-child(6){width:13%}.pdf-page th,.pdf-page td{border:1px solid #d9c6cc;padding:7px 6px;text-align:right;vertical-align:middle;overflow-wrap:anywhere}.pdf-page th:nth-child(4),.pdf-page td:nth-child(4){min-width:92px;white-space:nowrap;overflow-wrap:normal}.pdf-page th:nth-child(5),.pdf-page td:nth-child(5){min-width:112px;white-space:nowrap;overflow-wrap:normal}.pdf-page th:nth-child(6),.pdf-page td:nth-child(6){min-width:95px;white-space:nowrap;overflow-wrap:normal}.pdf-page th{background:#f3e1e6;color:#571321;font-weight:bold}.pdf-page td.negative{color:#c62828;font-weight:bold}.report-summary{margin-top:10px;background:#fff5f7;border:1px solid #ead9de;padding:9px;font-size:11px;line-height:1.7;font-weight:bold}.report-foot{position:absolute;bottom:24px;left:38px;right:38px;border-top:1px solid #b98c98;padding-top:8px;display:flex;justify-content:space-between;align-items:center;color:#6b2938;font-size:10px}.report-foot strong{font-size:9px;color:#1456a0}.date-cell{direction:ltr;unicode-bidi:isolate;white-space:nowrap}@media print{body{background:#fff}.toolbar{display:none}.pdf-page{margin:0;box-shadow:none;page-break-after:always;break-after:page}}
     </style></head><body><div class="toolbar"><button onclick="exportReportPDF()">تنزيل PDF مباشرة</button><span>معاينة التقرير قبل التنزيل</span></div><div id="pages"></div>
     <script>
       const R=${json};const root=document.getElementById('pages');const pages=[];const source=document.createElement('tbody');source.innerHTML=(R.rows||[]).join('');const trs=[...source.querySelectorAll('tr')];
-      function newPage(){const p=document.createElement('section');p.className='pdf-page';p.innerHTML='<header class="report-head"><img crossorigin="anonymous" src="'+R.logo+'"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>'+R.title+'</b><p>الفترة: '+(R.from?R.from.split('-').reverse().join('-'):'—')+' إلى '+(R.to?R.to.split('-').reverse().join('-'):'—')+' | تاريخ الإصدار: '+new Date().toLocaleDateString('en-GB').replace(/\\//g,'-')+'</p></div></header><table><thead><tr>'+R.headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody></tbody></table><footer class="report-foot"><span>Fondant Choco | فوندانت شوكو</span><span class="page-num"></span><strong>Finance Manager - Yasser</strong></footer>';root.appendChild(p);pages.push(p);return p;}
+      function newPage(){const p=document.createElement('section');p.className='pdf-page';p.innerHTML='<header class="report-head"><img crossorigin="anonymous" src="'+R.logo+'"><div><h2>Fondant Choco | فوندانت شوكو</h2><b>'+R.title+'</b><p>الفترة: '+(R.from?R.from.split('-').reverse().join('-'):'—')+' إلى '+(R.to?R.to.split('-').reverse().join('-'):'—')+' | تاريخ الإصدار: '+new Date().toLocaleDateString('en-GB').replace(/\\//g,'-')+'</p></div></header><table class="'+(R.reportType==='item'?'item-purchase':'')+'"><thead><tr>'+R.headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody></tbody></table><footer class="report-foot"><span>Fondant Choco | فوندانت شوكو</span><span class="page-num"></span><strong>Finance Manager - Yasser</strong></footer>';root.appendChild(p);pages.push(p);return p;}
       let page=newPage(),body=page.querySelector('tbody');const maxTableHeight=820;
       for(const row of trs){const clone=row.cloneNode(true);[...clone.cells].forEach(td=>{if(/^\\s*-\\s*\\d/.test(td.textContent.trim()))td.classList.add('negative');if(/^\\d{2}-\\d{2}-\\d{4}$/.test(td.textContent.trim()))td.classList.add('date-cell')});body.appendChild(clone);if(page.querySelector('table').getBoundingClientRect().height>maxTableHeight&&body.children.length>1){body.removeChild(clone);page=newPage();body=page.querySelector('tbody');body.appendChild(clone)}}
       if(!trs.length){const tr=document.createElement('tr');tr.innerHTML='<td colspan="'+Math.max(1,R.headers.length)+'">لا توجد بيانات خلال الفترة المحددة</td>';body.appendChild(tr)}
@@ -701,7 +842,7 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
   }
   // Replace the conflicting legacy report handlers with one consistent implementation.
   window.printReport=function(type){
-    try{const r=reportRowsFor(type);if(!r){toast('تعذر تجهيز التقرير');return}audit('عرض تقرير',`${r.title} | ${r.from||'—'} إلى ${r.to||'—'}`);return makePreview(r.title,headersFC[type]||[],r.rows||[],r.summary,r.from,r.to,'FondantChoco_'+type)}
+    try{const r=reportRowsFor(type);if(!r){toast('تعذر تجهيز التقرير');return}audit('عرض تقرير',`${r.title} | ${r.from||'—'} إلى ${r.to||'—'}`);return makePreview(r.title,headersFC[type]||[],r.rows||[],r.summary,r.from,r.to,'FondantChoco_'+type,type)}
     catch(e){console.error('printReport failed',e);toast('حدث خطأ أثناء تجهيز التقرير: '+e.message)}
   };
   window.addEventListener('message',e=>{if(e.data?.type==='fc-report-exported')audit('تصدير تقرير PDF',e.data.title||'تقرير')});
@@ -722,8 +863,30 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
   db.audit=(db.audit||[]).slice(-2000);
 
   // Add an XLSX export control beside every data table in the application.
-  function loadSheetJS(){return new Promise((resolve,reject)=>{if(window.XLSX)return resolve();let existing=document.querySelector('script[data-sheetjs]');if(existing){existing.addEventListener('load',()=>resolve());existing.addEventListener('error',reject);return}let sc=document.createElement('script');sc.dataset.sheetjs='1';sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';sc.onload=resolve;sc.onerror=()=>reject(new Error('تعذر تحميل مكتبة Excel'));document.head.appendChild(sc)})}
-  window.exportTableXLSX=async function(tableId){try{await loadSheetJS();let table=tableId?document.getElementById(tableId):null;if(!table)return toast('لم يتم العثور على الجدول');let clone=table.cloneNode(true);clone.querySelectorAll('button').forEach(b=>b.remove());clone.querySelectorAll('input,select,textarea').forEach(el=>{let td=el.closest('td');if(td)td.textContent=el.value||'';el.remove()});let wb=XLSX.utils.table_to_book(clone,{sheet:'Data'});let title=table.closest('.section')?.querySelector('h3')?.textContent||'Table';let safe=title.replace(/[^\u0600-\u06FFa-zA-Z0-9_-]/g,'_');XLSX.writeFile(wb,'FondantChoco_'+safe+'_'+today()+'.xlsx');audit('تصدير جدول Excel',title);toast('تم تصدير الجدول إلى Excel')}catch(e){console.error(e);toast('تعذر تصدير Excel: '+e.message)}};
+  function loadSheetJS(){return new Promise((resolve,reject)=>{if(window.XLSX&&window.XLSX.version&&window.XLSX.version.includes('style'))return resolve();let existing=document.querySelector('script[data-sheetjs-style]');if(existing){existing.addEventListener('load',()=>resolve());existing.addEventListener('error',reject);return}let sc=document.createElement('script');sc.dataset.sheetjsStyle='1';sc.src='https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js';sc.onload=()=>window.XLSX?resolve():reject(new Error('مكتبة Excel غير متاحة'));sc.onerror=()=>reject(new Error('تعذر تحميل مكتبة Excel المنسقة'));document.head.appendChild(sc)})}
+  window.exportTableXLSX=async function(tableId){try{
+    await loadSheetJS();const table=tableId?document.getElementById(tableId):null;if(!table)return toast('لم يتم العثور على الجدول');
+    const clone=table.cloneNode(true);clone.querySelectorAll('button').forEach(b=>b.remove());clone.querySelectorAll('input,select,textarea').forEach(el=>{let td=el.closest('td');if(td)td.textContent=el.value||'';el.remove()});
+    const section=table.closest('.section'),title=section?.querySelector('h3')?.textContent?.trim()||'تقرير Fondant Choco';
+    const periodText=$('reportFrom')&&$('reportTo')?`الفترة: ${$('reportFrom').value||'—'} إلى ${$('reportTo').value||'—'}`:`تاريخ التقرير: ${today()}`;
+    const aoa=[['Fondant Choco | فوندانت شوكو'],[title],[periodText],[],...XLSX.utils.sheet_to_json(clone,{header:1,raw:true})];
+    const ws=XLSX.utils.aoa_to_sheet(aoa),range=XLSX.utils.decode_range(ws['!ref']);
+    ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:Math.max(0,range.e.c)}},{s:{r:1,c:0},e:{r:1,c:Math.max(0,range.e.c)}},{s:{r:2,c:0},e:{r:2,c:Math.max(0,range.e.c)}}];
+    const border={top:{style:'thin',color:{rgb:'E7B7A0'}},bottom:{style:'thin',color:{rgb:'E7B7A0'}},left:{style:'thin',color:{rgb:'E7B7A0'}},right:{style:'thin',color:{rgb:'E7B7A0'}}};
+    for(let r=0;r<=range.e.r;r++)for(let c=0;c<=range.e.c;c++){
+      const addr=XLSX.utils.encode_cell({r,c});if(!ws[addr])continue;
+      let style={border,alignment:{vertical:'center',horizontal:'right',wrapText:false}};
+      if(r===0)style={...style,font:{bold:true,color:{rgb:'FFFFFF'},sz:16},fill:{fgColor:{rgb:'A63D00'}},alignment:{horizontal:'center',vertical:'center'}};
+      else if(r===1)style={...style,font:{bold:true,color:{rgb:'FFFFFF'},sz:13},fill:{fgColor:{rgb:'D35400'}},alignment:{horizontal:'center',vertical:'center'}};
+      else if(r===2)style={...style,font:{bold:true,color:{rgb:'7A2E00'},sz:11},fill:{fgColor:{rgb:'FCE4D6'}},alignment:{horizontal:'center',vertical:'center'}};
+      else if(r===4)style={...style,font:{bold:true,color:{rgb:'FFFFFF'},sz:11},fill:{fgColor:{rgb:'A63D00'}},alignment:{horizontal:'center',vertical:'center',wrapText:false}};
+      else if(r>=5)style={...style,fill:{fgColor:{rgb:(r%2===1?'FFFFFF':'FCEFE7')}},font:{color:{rgb:'333333'},sz:10}};
+      ws[addr].s=style;
+    }
+    ws['!rows']=[{hpt:28},{hpt:23},{hpt:20},{hpt:8}];
+    ws['!cols']=Array.from({length:range.e.c+1},(_,c)=>({wch:Math.min(42,Math.max(13,...Array.from({length:range.e.r+1},(_,r)=>String(ws[XLSX.utils.encode_cell({r,c})]?.v??'').length+2)))}));
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Report');const safe=title.replace(/[^\u0600-\u06FFa-zA-Z0-9_-]/g,'_');XLSX.writeFile(wb,'FondantChoco_'+safe+'_'+today()+'.xlsx');audit('تصدير جدول Excel',title);toast('تم تصدير تقرير Excel منسق وملون')
+  }catch(e){console.error(e);toast('تعذر تصدير Excel: '+e.message)}};
   function attachXlsxButtons(){document.querySelectorAll('table').forEach((table,index)=>{if(table.dataset.xlsxReady)return;table.dataset.xlsxReady='1';let id=table.id||('fcTable_'+index);table.id=id;let bar=document.createElement('div');bar.className='xlsx-toolbar no-print';bar.style.cssText='display:flex;justify-content:flex-start;margin:6px 0';bar.innerHTML=`<button type="button" class="btn secondary small" onclick="exportTableXLSX('${id}')">تصدير Excel</button>`;table.parentElement.insertBefore(bar,table)})}
   attachXlsxButtons();
 
@@ -1041,6 +1204,88 @@ setupDates();refresh();$('today').textContent=dateDisplay(today());
   const previewPatch=document.createElement('style');previewPatch.textContent='';document.head.appendChild(previewPatch);
   // Refresh computed cards once after all elements and handlers are installed.
   try{if(typeof window.renderDashboard==='function')window.renderDashboard();if(typeof window.renderReports==='function')window.renderReports()}catch(e){console.warn('KPI refresh skipped',e)}
+})();
+</script>
+
+<script>
+(function(){
+  'use strict';
+  const SESSION_KEY='fc_active_user_session_v1';
+  const originalLogin=window.login, originalLogout=window.logout;
+  if(typeof originalLogin==='function'){
+    window.login=function(){
+      const key=document.getElementById('loginUser')?.value||'';
+      const password=document.getElementById('loginPassword')?.value||'';
+      let valid=false;
+      try{const users=getUsers();valid=!!users[key]&&users[key].password===password}catch(e){}
+      originalLogin();
+      if(valid){try{sessionStorage.setItem(SESSION_KEY,key)}catch(e){}}
+    };
+  }
+  if(typeof originalLogout==='function'){
+    window.logout=function(){
+      try{sessionStorage.removeItem(SESSION_KEY)}catch(e){}
+      originalLogout();
+    };
+  }
+  function restore(){
+    let key='';try{key=sessionStorage.getItem(SESSION_KEY)||''}catch(e){}
+    if(!key)return;
+    let users={};try{users=getUsers()}catch(e){}
+    const user=users[key];
+    if(!user){try{sessionStorage.removeItem(SESSION_KEY)}catch(e){};return}
+    try{
+      currentUser=key;
+      const overlay=document.getElementById('loginOverlay');if(overlay)overlay.style.display='none';
+      const label=document.getElementById('currentUserLabel');if(label)label.textContent=user.name||key;
+      if(typeof applyUserAccess==='function')applyUserAccess();
+      const first=(typeof userCan==='function'&&userCan('dashboard'))?'dashboard':
+        ((typeof userCan==='function'&&userCan('reports'))?'reports':
+        ((user.permissions||[]).find(x=>typeof PERMISSION_PAGES!=='undefined'&&PERMISSION_PAGES.includes(x))||'reports'));
+      if(typeof go==='function')go(first);
+      if(typeof refresh==='function')refresh();
+    }catch(e){console.error('Could not restore signed-in session',e)}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore,{once:true});
+  else restore();
+})();
+</script>
+
+<script>
+/* Final report layout and role visibility adjustments. */
+(function(){
+  const root=document.getElementById('reports');if(!root)return;
+  const dateFilters=root.querySelector('#reportFrom')?.closest('.filters');
+  const wrap=root.querySelector('.report-actions-top');
+  if(wrap){
+    const h=wrap.querySelector('h3');if(h)h.textContent='عرض التقارير على الشاشة';
+    const note=wrap.querySelector('.muted');if(note)note.textContent='اختر التقرير لعرض معاينته في نافذة مستقلة، ثم استخدم زر تصدير PDF داخل المعاينة.';
+    if(dateFilters&&wrap.previousElementSibling!==dateFilters)dateFilters.insertAdjacentElement('afterend',wrap);
+    const actions=wrap.querySelector('.report-actions');
+    if(actions){
+      actions.querySelectorAll('[data-extra-report]').forEach(b=>b.remove());
+      const defs=[
+        ['supplier','تفصيل مشتريات الموردين'],
+        ['channels','تحليل المبيعات حسب قناة البيع'],
+        ['margin','تحليل ربحية المنتجات وهامش الربح'],
+        ['monthly','مقارنة المبيعات والمشتريات والمصروفات شهرياً'],
+        ['lowstock','الأصناف منخفضة المخزون والكمية المطلوبة']
+      ];
+      defs.forEach(([type,label])=>{
+        const b=document.createElement('button');b.type='button';b.className='btn secondary';
+        b.dataset.extraReport=type;b.textContent='معاينة '+label;
+        b.onclick=()=>window.printReport(type);actions.appendChild(b);
+      });
+    }
+  }
+  const role=window.currentUser;
+  const card=document.getElementById('reportItemCard');
+  if(card)card.style.display=(role==='nawaf'||role==='ibrahim')?'none':'';
+  ['reportFrom','reportTo'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{
+    const f=document.getElementById('reportItemCardFrom'),t=document.getElementById('reportItemCardTo');
+    if(f)f.value=document.getElementById('reportFrom')?.value||'';
+    if(t)t.value=document.getElementById('reportTo')?.value||'';
+  }));
 })();
 </script>
 </body></html>
